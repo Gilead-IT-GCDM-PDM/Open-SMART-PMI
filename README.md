@@ -29,10 +29,6 @@ Table of Contents
 
    4.3. [Setting Up a Development Environment][#4.3]
 
-   4.4. [Running Automated Tests][#4.4]
-
-   4.5. [Cleaning the Development Directory][#4.5]
-
 -------------------------------------------------------------------------------
 
 ## 1. Overview
@@ -43,7 +39,8 @@ The application of green chemistry is critical for cultivating environmental res
 
 ## 2. Getting Started
 
-Instructions for installing and using the package.
+USER GUIDE PENDING. Instructions to set up and run the local application will be written here. 
+For modeling applications, refer to Section 4.3 in Setting Up a Development Environment.
 
 -------------------------------------------------------------------------------
 
@@ -57,7 +54,7 @@ No currently known issues.
 
 ### 4.1. License
 
-The contents of this package are covered under the Apache License 2.0 (included
+The contents of this package are covered under the MIT License (included
 in the `LICENSE` file). The copyright for this package is contained in the
 `NOTICE` file.
 
