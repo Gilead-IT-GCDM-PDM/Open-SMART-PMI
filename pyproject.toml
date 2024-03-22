@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "2022-smart-pmi-v1"
+name = "OpenSMART-PMI"
 version = "0.1.0"
 description = ""
 authors = ["nicoletin-gilead <nicole.tin1@gilead.com>"]
 readme = "README.md"
-packages = [{include = "2022_smart_pmi_v1"}]
+packages = [{include = "OpenSMART-PMI"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
