@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "2022-smart-pmi-v1"
+version = "0.1.0"
+description = ""
+authors = ["nicoletin-gilead <nicole.tin1@gilead.com>"]
+readme = "README.md"
+packages = [{include = "2022_smart_pmi_v1"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+numpy = "1.22.4"
+pandas = "1.4.3"
+matplotlib = "3.5.2"
+rdkit = "2022.3.5"
+mordred = "1.2.0"
+scikit-learn = "1.1.2"
+dtreeviz = ">=2.1"
+plotly = "5.9.0"
+rdkit-pypi = "2022.3.4"
+seaborn = "0.11.2"
+statsmodels = "0.13.2"
+ipykernel = "^6.22.0"
+xgboost = "^1.7.5"
+tqdm = "^4.65.0"
+shap = ">=0.42.1"
+imblearn = "^0.0"
+nbformat = "^5.8.0"
+deepchem = "^2.7.1"
+# tensorflow-macos = "^2.13.0"
+explainerdashboard = "^0.4.3"
+jupyter = "^1.0.0"
+ipywidgets = "^8.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
