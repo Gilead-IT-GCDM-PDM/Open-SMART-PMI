@@ -18,7 +18,7 @@ from sklearn.preprocessing import MinMaxScaler
 import molecular_descriptors
 
 
-# -- VARIABLE SETTING
+# -- FIXED VARIABLES
 basemodels = {
     "tuned_rf": RandomForestRegressor(
         max_depth=6,
@@ -51,13 +51,22 @@ basemodels = {
 
 s = 300
 
+# -- 
+
+def read_data(filename):
+    data = pd.read_csv(filename)
+    data = data[:100]
+    assert 'SMILES' in data.columns, "Missing SMILES column in data"
+    assert 'meanComplexity' in data.columns, "Missing meanComplexity column in data"
+    return data
+
+# -- TRAINING MODULE
 
 def train(data_path, output_dir, grid_search=True):
     data = read_data(data_path)
-    # data = data[:20]
-
-    assert 'SMILES' in data.columns, "Missing SMILES column in data"
-    assert 'meanComplexity' in data.columns, "Missing meanComplexity column in data"
+    now = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+    path = os.path.join(output_dir, 'model_'+now)
+    os.mkdir(path=path)
 
     # X, y = prepare_data_for_training(data)
     if os.path.exists('X.pkl'):
@@ -68,8 +77,8 @@ def train(data_path, output_dir, grid_search=True):
 
     X.fillna(0, inplace=True)
 
-    missing_cols = filter_columns(X)
-    X.drop(columns=missing_cols, inplace=True)
+    removed_cols = filter_columns(X)
+    X.drop(columns=removed_cols, inplace=True)
     # should happen before prepare
     X_train, X_test, y_train, y_test = train_test_split(
         X,
@@ -77,61 +86,20 @@ def train(data_path, output_dir, grid_search=True):
         test_size=0.2,
         random_state=42
     )
-    low_var_cols = filter_columns_training_data(X_train)
+    low_var_cols = filter_test_rm_low_var(X_train)
     X_train.drop(columns=low_var_cols, inplace=True)
     X_test.drop(columns=low_var_cols, inplace=True)
 
     model = rf_regress(X_train, y_train, grid_search)
-    # model = result['model']
     make_predictions(model, X_test, y_test)
-    # print evaluation using X_test, t_test
-    # test model
-    now = datetime.now().strftime('%Y-%m-%d_%H%M%S')
-    pickle.dump(model, open(f'{output_dir}/model_{now}', 'wb'))
-    pickle.dump(low_var_cols.union(missing_cols), open(f'{output_dir}/missing_cols', 'wb'))
 
-
-def read_data(filename):
-    data = pd.read_csv(filename)
-    return data
-
-"""
-
-def prepare_data_for_training(data):
-    assert 'SMILES' in data.columns, "Expected SMILES columns in data"
-    assert 'meanComplexity' in data.columns, "Expected meanComplexity in data"
-
-    X = molecular_descriptors.compute(data.SMILES)
-    columns_to_drop = filter_columns(X)
-    X = X.drop(columns=['SMILES'] + columns_to_drop).fillna(0),
-
-    low_variance = filter_training_set_columns(X)
-    X.drop(columns=low_variance, inplace=True)
-    y = data.meanComplexity.loc[X.index]
-
-    return X, y
-"""
-
-
-"""
-def old_prepare(data):
-    X = desc.molecular_descriptors(data.SMILES)
-
-    columns_to_drop = filter_columns(X)
-
-    y = data.meanComplexity.loc[X.index]
-    X_train, X_test, y_train, y_test = train_test_split(
-        X.drop(columns=['SMILES']+columns_to_drop).fillna(0),
-        y,
-        test_size=0.2,
-        random_state=42
-    )
-
-    low_variance = filter_training_set_columns(X_train)
-    X_train = X_train.drop(columns=low_variance)
-    # X_test = X_test.drop(columns=low_variance)
-    return X, y, X_train, X_test, y_train, y_test
-"""
+    # write results to folder
+    pickle.dump(model, open(f'{path}/{now}_model.pkl', 'wb'))
+    pickle.dump(X_train, open(f'{path}/x_train.pkl', 'wb'))
+    pickle.dump(y_train, open(f'{path}/y_train.pkl', 'wb'))
+    pickle.dump(X_test, open(f'{path}/x_test.pkl', 'wb'))
+    pickle.dump(y_test, open(f'{path}/y_test.pkl', 'wb'))
+    pickle.dump(low_var_cols.union(removed_cols), open(f'{path}/removed_cols', 'wb'))
 
 
 def filter_columns(df):
@@ -149,7 +117,7 @@ def filter_columns(df):
     return nulls
 
 
-def filter_columns_training_data(df):
+def filter_test_rm_low_var(df):
     dff = df.astype(float)
     m = len(dff.columns)
     null_rate = 0.125
@@ -225,7 +193,6 @@ def rf_regress(train_x, train_y, val_split=0.8, grid_search=False):
         bootstrap = [True, False]
         random_grid['bootstrap'] = bootstrap
 
-        # FIXME: tune the scoring method: https://gabrieltseng.github.io/posts/2018-02-25-XGB/
         model = RandomizedSearchCV(
             scoring='neg_root_mean_squared_error',
             estimator=model,
@@ -237,14 +204,11 @@ def rf_regress(train_x, train_y, val_split=0.8, grid_search=False):
             n_jobs=-1
         )
 
-        # x = x.apply(lambda i: np.log10(i) if np.issubdtype(type(i), np.number) else i)
     train_x = train_x.astype(float)
     model.fit(train_x, train_y)
 
-    now = datetime.now().strftime('%Y-%m-%d_%H%M%S')
-    pickle.dump(model, open(f'../data/model_{now}', 'wb'))
-
-
+    # now = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+    # pickle.dump(model, open(f'../data/model_{now}.pkl', 'wb'))
     return model
 
 

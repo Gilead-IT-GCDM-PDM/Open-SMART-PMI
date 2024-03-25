@@ -38,7 +38,6 @@ def read_sdf_files(names):
     df = pd.concat(dfs)
     df['ID'] = names
     df.reset_index(drop=True, inplace=True)
-
     return df
 
 
@@ -50,15 +49,41 @@ def prepare_data(data):
     return X_new, y_new
 """
 
+def predict(model_path, input, output_dir):
+    '''
+    predict the complexity and SMART-PMI of a given molecule(s). 
 
-def predict(model_path, input_dir, output_dir):
+    `model_path`: path to the chosen model object
+    `input`: the molecule source. `input` is compatible with:
+        (1) a directory of .SDF files 
+        (2) a file containing SMILES strings (denoted by 'SMILES' in the header row)
+        (3) a pandas dataframe containing SMILES strings as a pickled object
+    `output`: directory to store prediction information
+
+    '''
     assert os.path.exists(model_path), f"Model: {model_path} does not exists"
-    assert os.path.exists(input_dir), f"Input dir: {input_dir} does not exists"
     assert os.path.exists(output_dir), f"Output dir: {output_dir} does not exists"
 
     try:
-        filenames = list(glob(f"{input_dir}/*.sdf"))
-        df = read_sdf_files(filenames)
+        input_ext = input[-4:]
+        # path for predicting from directory of SDF files 
+        if os.path.isdir(input):
+            assert os.path.exists(input_dir), f"Input dir: {input_dir} does not exists"
+            input_dir = input
+            filenames = list(glob(f"{input_dir}/*.sdf"))
+            df = read_sdf_files(filenames)
+        # path for predicting from csv or excel file
+        elif ('.csv' in input_ext) | ('.txt' in input_ext):
+            df = pd.read_csv(input)
+        elif ('.xlsx' in input_ext):
+            df = pd.read_excel(input)
+        # path for predicting from pickled dataframe
+        elif ('.obj' in input_ext) | ('.pkl' in input_ext):
+            with open(input, 'rb') as f:
+                df = pickle.load(f)
+
+        assert 'SMILES' in df.columns, "Missing SMILES column in data"
+            
         predicts = make_predictions(model_path, df)
         generate_output(predicts, output_dir)
         return predicts
