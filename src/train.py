@@ -94,7 +94,8 @@ def train(data_path, output_dir, grid_search=True):
     make_predictions(model, X_test, y_test)
 
     # write results to folder
-    pickle.dump(model, open(f'{path}/{now}_model.pkl', 'wb'))
+    model_aattrs = [model, X_test.columns]
+    pickle.dump(model_aattrs, open(f'{path}/{now}_model_aattrs.pkl', 'wb'))
     pickle.dump(X_train, open(f'{path}/x_train.pkl', 'wb'))
     pickle.dump(y_train, open(f'{path}/y_train.pkl', 'wb'))
     pickle.dump(X_test, open(f'{path}/x_test.pkl', 'wb'))

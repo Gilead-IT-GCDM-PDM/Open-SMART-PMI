@@ -1,17 +1,18 @@
+# -- STANDARD IMPORTS --
 import os
 import pickle
 import traceback
 import pandas as pd
-import openpyxl
 from glob import glob
 from datetime import datetime
 from rdkit.Chem import PandasTools
 
-
+# -- PACKAGE IMPORTS -- 
 import molecular_descriptors
 
 
 """
+#FIXME
 def make_predictions(filenames):
     # -- processing new molecules
 
@@ -23,7 +24,7 @@ def make_predictions(filenames):
     df['Predictions'] = gs_04_model.predict(X_new[['UNIQUETT', 'NumAtomStereoCenters', 'NumHeteroatoms', 'chi4n',]])
 
     # FIXME: add mol wt and smart-pmi conversion
-    # output rpredictions
+    # output predictions
     return df
 """
 
@@ -42,12 +43,17 @@ def read_sdf_files(names):
 
 
 """
+# FIXME
 def prepare_data(data):
     assert set(['SMILES', 'meanComplexity']) <= set(data.columns)
     y_new = data.meanComplexity.loc[X_new.index]
 
     return X_new, y_new
 """
+
+#FIXME: decide?
+def predict(input, output_dir, model_path=None):
+    return # use GS-04 model
 
 def predict(model_path, input, output_dir):
     '''
@@ -84,28 +90,28 @@ def predict(model_path, input, output_dir):
 
         assert 'SMILES' in df.columns, "Missing SMILES column in data"
             
-        predicts = make_predictions(model_path, df)
-        generate_output(predicts, output_dir)
-        return predicts
+        preds = make_predictions(model_path, df)
+        generate_output(preds, output_dir)
+        return preds
     except:
         traceback.print_exc()
 
 
-def make_predictions(model_path, df):
+def make_predictions(model_path, x):
+    '''
+    Use given model to make molecular complexity and SMART-PMI predictions
+    '''
     with open(model_path, 'rb') as f:
-        model = pickle.load(f)
+        model, attributes = pickle.load(f)
 
-    X = molecular_descriptors.compute(df.SMILES)
+    # FIXME: data needs to go through SAME preprocessing steps as training
+    X = molecular_descriptors.compute(x.SMILES)
 
-    model_params = list(pd.read_csv('../model/model_params.csv').params)
-    df['Predictions'] = model.predict(X[model_params].astype(float))
-
-    # mol wt = (processed dataset instance).amw
-    # smart_pmi = (0.13 * .amw) + (177 * [complexity]) - 252
-
-
-    # TODO add molecular weight etc
-    return df
+    res = pd.DataFrame()
+    res['molwt'] = X.exactmw
+    res['molComplexity'] = model.predict(X[attributes].astype(float))
+    res['SMART-PMI'] = (0.13 * res.molwt) + (177 * res.molComplexity) - 252
+    return res
 
 
 def generate_output(df, output_dir):
