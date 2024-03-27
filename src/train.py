@@ -14,69 +14,29 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.preprocessing import MinMaxScaler
 
-
 import molecular_descriptors
 
-
-# -- FIXED VARIABLES
-basemodels = {
-    "tuned_rf": RandomForestRegressor(
-        max_depth=6,
-        max_features=None,
-        min_samples_leaf=2,
-        min_samples_split=30,
-        n_estimators=366,
-        random_state=42
-    ),
-    "rf": RandomForestRegressor(
-        n_estimators=100,
-        random_state=42
-    ),
-    "nnet": MLPRegressor(  # must be normalized
-        random_state=42,
-        max_iter=500
-    ),
-    "svr": SVR(
-        gamma='auto'
-    ),
-    "pls": PLSRegression(  # must be normalized
-        n_components=3,
-        scale=True
-    ),
-    "knn": KNeighborsRegressor(
-        n_neighbors=7,
-        weights='distance'
-    ),
-}
-
-s = 300
-
-# -- 
-
-def read_data(filename):
-    data = pd.read_csv(filename)
-    data = data[:100]
-    assert 'SMILES' in data.columns, "Missing SMILES column in data"
-    assert 'meanComplexity' in data.columns, "Missing meanComplexity column in data"
-    return data
-
-# -- TRAINING MODULE
+# -- TRAINING MODULE --
 
 def train(data_path, output_dir, grid_search=True):
+    '''
+    
+    '''
+    # create output directory
     data = read_data(data_path)
     now = datetime.now().strftime('%Y-%m-%d_%H%M%S')
     path = os.path.join(output_dir, 'model_'+now)
     os.mkdir(path=path)
 
-    # X, y = prepare_data_for_training(data)
+    # FIXME
     if os.path.exists('X.pkl'):
         X = pickle.load(open('X.pkl', 'rb'))
     else:
         X = molecular_descriptors.compute(data.SMILES)
     y = data.meanComplexity.loc[X.index]
 
+    # data preprocessing
     X.fillna(0, inplace=True)
-
     removed_cols = filter_columns(X)
     X.drop(columns=removed_cols, inplace=True)
     # should happen before prepare
@@ -90,21 +50,32 @@ def train(data_path, output_dir, grid_search=True):
     X_train.drop(columns=low_var_cols, inplace=True)
     X_test.drop(columns=low_var_cols, inplace=True)
 
+    # make predictions
     model = rf_regress(X_train, y_train, grid_search)
     make_predictions(model, X_test, y_test)
 
-    # write results to folder
+    # write results and variables to folder
     model_aattrs = [model, X_test.columns]
-    pickle.dump(model_aattrs, open(f'{path}/{now}_model_aattrs.pkl', 'wb'))
-    pickle.dump(X_train, open(f'{path}/x_train.pkl', 'wb'))
-    pickle.dump(y_train, open(f'{path}/y_train.pkl', 'wb'))
-    pickle.dump(X_test, open(f'{path}/x_test.pkl', 'wb'))
-    pickle.dump(y_test, open(f'{path}/y_test.pkl', 'wb'))
-    pickle.dump(low_var_cols.union(removed_cols), open(f'{path}/removed_cols', 'wb'))
+    removed = low_var_cols.union(removed_cols)
+    write_data(path, now,
+               model_aattrs,
+               X_train, y_train, X_test, y_test,
+               removed)
+
+
+# -- DATA FILTERING -- 
+
+def read_data(filename):
+    data = pd.read_csv(filename)
+    data = data[:100]
+    assert 'SMILES' in data.columns, "Missing SMILES column in data"
+    assert 'meanComplexity' in data.columns, "Missing meanComplexity column in data"
+    return data
 
 
 def filter_columns(df):
-    """ dispose of columns that are null or error objects
+    """ 
+    dispose of columns that contain many null or error objects
     """
     nonnumerics = df.copy().drop(columns=['SMILES']).select_dtypes(exclude='number').applymap(type).apply(set).to_frame()
     ind = pd.get_dummies(nonnumerics.explode(0))
@@ -119,6 +90,10 @@ def filter_columns(df):
 
 
 def filter_test_rm_low_var(df):
+    '''
+    Apply filtering steps (generated from training set) on test set
+    Additionally remove variables of low variance
+    '''
     dff = df.astype(float)
     m = len(dff.columns)
     null_rate = 0.125
@@ -135,8 +110,31 @@ def filter_test_rm_low_var(df):
     cols_to_drop = low_var_columns.union(gt125pct_null)
     return cols_to_drop
 
+# -- EXPERIMENT TRACKING -- 
+
+def write_data(path, now,
+               model_aattrs,
+               X_train, y_train, X_test, y_test,
+               removed):
+    '''
+    Write data to experiment folder
+    '''
+    pickle.dump(model_aattrs, open(f'{path}/{now}_model_aattrs.pkl', 'wb'))
+    pickle.dump(X_train, open(f'{path}/x_train.pkl', 'wb'))
+    pickle.dump(y_train, open(f'{path}/y_train.pkl', 'wb'))
+    pickle.dump(X_test, open(f'{path}/x_test.pkl', 'wb'))
+    pickle.dump(y_test, open(f'{path}/y_test.pkl', 'wb'))
+    pickle.dump(removed, open(f'{path}/removed_cols', 'wb'))
+
+
+
+
+# -- GENERAL MODELING HELPER FUNCTIONS --
 
 def compute_model_scores(x_train, y_train, models: dict):
+    '''
+    general helper function to quickly evaluate models
+    '''
     scores = {}
     model_info = {}
 
@@ -165,6 +163,10 @@ def compute_model_scores(x_train, y_train, models: dict):
 
 
 def rf_regress(train_x, train_y, val_split=0.8, grid_search=False):
+    '''
+    Helper function to quickly tune and evaluate random forest models
+    '''
+
     # -- Pick model
     model = base_model()
 
@@ -234,7 +236,8 @@ def make_predictions(model, X, y):
 
 
 def base_model():
-    """ With the optimal hyperparameters for the training data
+    """ 
+    With the optimal hyperparameters for the full training data
     """
     return RandomForestRegressor(
         max_depth=6,
