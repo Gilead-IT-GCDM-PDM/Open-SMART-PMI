@@ -76,7 +76,7 @@ One or more molecules (in ChemDraw .SDF files) can be uploaded for analysis.
 The application must be installed locally and is stateless to ensure data privacy. Installation can be done through the 
 command line [Section 4] or via Docker. The latter is recommended for those with limited programming experience.
 
- ![image info](./src/webapp/assets/web-app.jpg)
+ ![image](./src/webapp/assets/web-app.jpg)
 
 -------------------------------------------------------------------------------
 
