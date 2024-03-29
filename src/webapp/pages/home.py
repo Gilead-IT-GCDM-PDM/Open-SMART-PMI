@@ -58,6 +58,7 @@ def compute_pmi(content, name):
         complexity = estimates.iloc[0]['molComplexity']
         pmi = estimates.iloc[0]['SMART-PMI']
         mw = estimates.iloc[0]['molwt']
+        estimates['ID'] = name
 
         cols = ['ID', 'SMILES', 'molComplexity', 'molwt', 'SMART-PMI']
         display = estimates[cols]
