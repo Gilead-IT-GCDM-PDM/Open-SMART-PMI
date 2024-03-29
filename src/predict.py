@@ -6,7 +6,7 @@ import pandas as pd
 from glob import glob
 from datetime import datetime
 import rdkit.Chem
-from rdkit.Chem import Draw
+from rdkit.Chem import Draw, PandasTools
 
 # -- PACKAGE IMPORTS -- 
 import molecular_descriptors
@@ -28,6 +28,15 @@ def make_predictions(filenames):
     # output predictions
     return df
 """
+
+# find location of current file
+
+MODEL_GS_04 = os.path.join(
+    os.path.dirname(__file__),
+    os.pardir,
+    'models',
+    'GS_04_Model_attrs.obj'
+)
 
 
 def read_sdf_files(names):
@@ -75,7 +84,7 @@ def prepare_data(data):
     return X_new, y_new
 """
 
-def predict(input, output_dir, model_path=None):
+def predict(input, output_dir, model_path=''):
     '''
     predict the complexity and SMART-PMI of a given molecule(s). 
 
@@ -95,21 +104,16 @@ def predict(input, output_dir, model_path=None):
         assert 'SMILES' in df.columns, "Missing SMILES column in data"
 
         if not model_path:
-            try:
-                file_path = os.path.dirname(os.path.realpath(__file__))
-                model_path = file_path + '/../models/GS_04_Model_attrs.obj'
-                print('... Using default model ...')
-            except Exception as ex:
-                raise ex
+            model_path = MODEL_GS_04
         
-        preds = make_predictions(model_path, df)
+        preds = make_predictions(df, model_path)
         generate_output(preds, output_dir)
         return preds
     except:
         traceback.print_exc()
 
 
-def make_predictions(model_path, x):
+def make_predictions(x, model_path=MODEL_GS_04):
     '''
     Use given model to make molecular complexity and SMART-PMI predictions
     '''
@@ -124,7 +128,15 @@ def make_predictions(model_path, x):
     res['molwt'] = X.exactmw
     res['molComplexity'] = model.predict(X[attributes].astype(float))
     res['SMART-PMI'] = (0.13 * res.molwt) + (177 * res.molComplexity) - 252
-    return res
+
+    return res.round(3)
+
+
+def calculate_smart_pmi(r):
+    mol_wt = r['MW']
+    complexity = r['Complexity']
+    smart_pmi = (0.13 * mol_wt) + (177 * complexity) - 252
+    return round(smart_pmi, 2)
 
 
 def generate_output(df, output_dir):

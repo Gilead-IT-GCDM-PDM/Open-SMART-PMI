@@ -1,0 +1,16 @@
+# --- Include requirements.txt
+
+-r requirements.txt
+
+# --- Development requirements
+
+# Code testing
+coverage
+pytest
+pytest-cov
+pytest-xdist
+
+# Code quality
+pycodestyle
+pytest-pycodestyle
+radon
