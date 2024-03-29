@@ -50,8 +50,9 @@ The application of green chemistry is critical for cultivating environmental res
 ├── NOTICE             <- package copyright notice
 ├── pyproject.toml     <- Python project metadata file
 ├── poetry.lock        <- Poetry lockfile
-├── bin/               <- scripts and programs (e.g., CLI tools)
-└── src/               <- package source code
+├── models/            <- saved models
+├── data/              <- saved data (supplementary data from Merck)
+└── src/               <- package source code and programs
 ```
 
 ### 1.2. License
@@ -68,7 +69,14 @@ There are currently no known issues for the package.
 
 ## 2. App Usage (Demo)
 
+The web application is depicted below. Users can upload ChemDraw .SDF files and generate rapid predictions about
+the respective molecular complexity and SMART-PMI. The predictive model, GS-04, is further detailed in the paper.
 
+One or more molecules (in ChemDraw .SDF files) can be uploaded for analysis.
+The application must be installed locally and is stateless to ensure data privacy. Installation can be done through the 
+command line [Section 4] or via Docker. The latter is recommended for those with limited programming experience.
+
+ ![image info](./src/webapp/assets/web-app.jpg)
 
 -------------------------------------------------------------------------------
 
@@ -81,16 +89,23 @@ takes in an `input` path pointing to the molecule source and will write the mode
     $ python src/main.py train --input <path_to_data> --output_dir <path_to_directory> 
     ```
 
-The following are accepted file formats for the `input` field:
+The following are accepted file formats as `input`:
 * directory of SDF files
-* file containing SMILES strings (csv, excel, (.obj or .pkl) dataframes)
+* file containing SMILES strings (csv, excel)
+* a stored dataframe containing SMILES strings (.pkl, .obj)
 
-The `predict` command takes in similar inputs, and also includes specification of the model to use. If left blank, 
-the four-feature model described in the paper will be used as default. 
+The `predict` command takes in similar inputs, and also includes an optional specification of the `model` to use. If left blank, 
+the four-feature model described in the paper (GS-04) is used as default. 
 
     ```shell
     $ python src/main.py predict --input <path_to_data> --output_dir <path_to_directory> --model <path_to_model>
     ```
+
+For more help and options, run 
+
+   ```shell
+   $ python src/main.py --help
+   ```
 
 -------------------------------------------------------------------------------
 
@@ -155,14 +170,13 @@ and install the Python package dependencies.
 
 1. Launching the web application from the command line. 
 
-For more details on usage, refer to Section 2.
-
    ```shell
    $ cd src
    $ python -m webapp.index
    ```
 
    Navigate to the link described in the terminal: `Dash is running on` `http://0.0.0.0:8050/` (example)
+   For more details on usage, refer to Section 2.
 
 2. For model experimentation via the CLI, refer to Section 3.
 
