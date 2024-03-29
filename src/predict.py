@@ -27,6 +27,15 @@ def make_predictions(filenames):
     return df
 """
 
+# find location of current file
+
+DEFAULT_MODEL = os.path.join(
+    os.path.dirname(__file__),
+    os.pardir,
+    'model',
+    'default_model'
+)
+
 
 def read_sdf_files(names):
     dfs = []
@@ -66,21 +75,29 @@ def predict(model_path, input_dir, output_dir):
         traceback.print_exc()
 
 
-def make_predictions(model_path, df):
+def make_predictions(df, model_path=DEFAULT_MODEL):
     with open(model_path, 'rb') as f:
         model = pickle.load(f)
 
     X = molecular_descriptors.compute(df.SMILES)
+    params_path = os.path.join(os.path.dirname(DEFAULT_MODEL), 'model_params.csv')
+    model_params = list(pd.read_csv(params_path).params)
+    df['Complexity'] = model.predict(X[model_params].astype(float))
+    df['MW'] = X.exactmw
+    df['sPMI'] = df.apply(lambda r: calculate_smart_pmi(r), axis=1)
 
-    model_params = list(pd.read_csv('../model/model_params.csv').params)
-    df['Predictions'] = model.predict(X[model_params].astype(float))
+    df['Complexity'] = df['Complexity'].apply(lambda c: round(c, 3))
+    df['MW'] = df['MW'].apply(lambda c: round(c, 3))
+    df['sPMI'] = df['sPMI'].apply(lambda c: round(c, 3))
 
-    # mol wt = (processed dataset instance).amw
-    # smart_pmi = (0.13 * .amw) + (177 * [complexity]) - 252
-
-
-    # TODO add molecular weight etc
     return df
+
+
+def calculate_smart_pmi(r):
+    mol_wt = r['MW']
+    complexity = r['Complexity']
+    smart_pmi = (0.13 * mol_wt) + (177 * complexity) - 252
+    return round(smart_pmi, 2)
 
 
 def generate_output(df, output_dir):
