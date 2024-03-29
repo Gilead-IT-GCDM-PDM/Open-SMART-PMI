@@ -29,7 +29,7 @@ def make_predictions(filenames):
     return df
 """
 
-# find location of current file
+# Set path for Model GS-04
 
 MODEL_GS_04 = os.path.join(
     os.path.dirname(__file__),
@@ -129,6 +129,7 @@ def make_predictions(x, model_path=MODEL_GS_04):
     res['molwt'] = X.exactmw
     res['molComplexity'] = model.predict(X[attributes].astype(float))
     res['SMART-PMI'] = (0.13 * res.molwt) + (177 * res.molComplexity) - 252
+    res['SMILES'] = smiles
 
     return res.round(3)
 
@@ -138,6 +139,52 @@ def calculate_smart_pmi(r):
     complexity = r['Complexity']
     smart_pmi = (0.13 * mol_wt) + (177 * complexity) - 252
     return round(smart_pmi, 2)
+
+
+def read_sdf_files(names):
+    dfs = []
+    # convert SDF to SMILES
+    for file in names:
+        load_mol = rdkit.Chem.PandasTools.LoadSDF(file, smilesName='SMILES').head(1)
+        dfs += [load_mol]
+
+    df = pd.concat(dfs)
+    df['ID'] = names
+    df.reset_index(drop=True, inplace=True)
+    
+    return df
+
+def read_input(input):
+        input_ext = input[-4:]
+
+        # path for predicting from directory of SDF files 
+        if os.path.isdir(input):
+            assert os.path.exists(input_dir), f"Input dir: {input_dir} does not exists"
+            input_dir = input
+            filenames = list(glob(f"{input_dir}/*.sdf"))
+            df = read_sdf_files(filenames)
+
+        # path for predicting from csv or excel file
+        elif ('.csv' in input_ext) | ('.txt' in input_ext):
+            df = pd.read_csv(input)
+        elif ('.xls' in input_ext):
+            df = pd.read_excel(input)
+
+        # path for predicting from pickled dataframe
+        elif ('.obj' in input_ext) | ('.pkl' in input_ext):
+            with open(input, 'rb') as f:
+                df = pickle.load(f)
+
+        return df
+
+"""
+# FIXME
+def prepare_data(data):
+    assert set(['SMILES', 'meanComplexity']) <= set(data.columns)
+    y_new = data.meanComplexity.loc[X_new.index]
+
+    return X_new, y_new
+"""
 
 
 def generate_output(df, output_dir):
