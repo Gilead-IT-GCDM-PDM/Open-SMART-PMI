@@ -60,10 +60,10 @@ def predict(model_path, input, output_dir):
     predict the complexity and SMART-PMI of a given molecule(s). 
 
     `model_path`: path to the chosen model object
-    `input`: the molecule source. `input` is compatible with:
+    `input`: the molecule source with. `input` is compatible with:
         (1) a directory of .SDF files 
-        (2) a file containing SMILES strings (denoted by 'SMILES' in the header row)
-        (3) a pandas dataframe containing SMILES strings as a pickled object
+        (2) a csv/excel file containing SMILES strings (denoted by 'SMILES' in the header row)
+        (3) a pickled object containing pandas dataframe containing SMILES strings (denoted by 'SMILES' in the header row)
     `output`: directory to store prediction information
 
     '''

@@ -20,6 +20,11 @@ import molecular_descriptors
 
 def train(data_path, output_dir, grid_search=True):
     '''
+    main training loop to preprocess the data and train a model
+
+    `data_path`: path to the chosen model object
+    `output_dir`: path to store model and experiment results
+    `grid_search`: perform grid search for hyperparameter tuning
     
     '''
     # create output directory
