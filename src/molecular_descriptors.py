@@ -43,7 +43,7 @@ def compute(smi_series):
     # combine feature descriptors into df
     df = pd.concat(df, axis=1)
     trim = lambda df: df[~df.index.isin(idx_to_exclude)]
-    print('removing ', len(idx_to_exclude), ' smiles')
+    print(f'... Removed the following SMILES {list(idx_to_exclude)}...')
     df = trim(df)
 
     # we can pass mol instead of smile: TODO

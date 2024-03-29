@@ -1,14 +1,16 @@
-# Open SMART-PMI
-
+Open SMART-PMI App
+===============================================================================
 
 -------------------------------------------------------------------------------
 
-This package contains the model, application, and copy of the training data used for the Open SMART-PMI project.
+The Open SMART-PMI app provides open source modeling of Process Mass Intensity to scientists. This package contains the model, applications, and the training data used for the Open SMART-PMI project.
 
-The open-smart-pmi package features:
+This repository supports the following workflows:
 
-* Scientific application for predicting PMI.
-* Scripts for training the model and testing on new data 
+* Standalone app: estimating the PMI of a molecule given data in a SDF or SMILES string format
+
+* Commandline interface: rapid re-training and changes in prediction
+
 
 -------------------------------------------------------------------------------
 
@@ -17,21 +19,22 @@ Table of Contents
 
 1. [Overview][#1]
 
-2. [Getting Started][#2]
+   1.1. [Package Contents][#1.1]
 
-3. [Known Issues][#3]
+   1.2. [License][#1.2]
 
-4. [Contributor Notes][#4]
+   1.3. [Known Issues][#1.3]
 
-   4.1. [License][#4.1]
+2. [App Usage (Demo)][#2]
 
-   4.2. [Package Contents][#4.2]
+3. [CLI Usage (Demo)][#3]
 
-   4.3. [Setting Up a Development Environment][#4.3]
+4. [CLI Build Instructions][#4]
 
-   4.4. [Running Automated Tests][#4.4]
+   4.1. [Setting Up a Build Environment][#4.1]
 
-   4.5. [Cleaning the Development Directory][#4.5]
+   4.2. [Building the App][#4.2]
+
 
 -------------------------------------------------------------------------------
 
@@ -39,29 +42,7 @@ Table of Contents
 
 The application of green chemistry is critical for cultivating environmental responsibility and sustainable practices in pharmaceutical manufacturing. Process Mass Intensity (PMI) is a key metric which quantifies the resource efficiency of a manufacturing process, but determining what constitutes a successful PMI of a specific molecule is challenging. A recent approach utilized the inherent complexity of the molecule to determine PMI targets from the chemical structure alone. While recent machine learning tools show promise in predicting molecular complexity, a more extensive application could significantly optimize manufacturing processes. To this end, we refine and expand upon the SMART-PMI tool by Sheridan et al. to create an open-source model and application. Our solution emphasizes explainability and parsimony to facilitate a nuanced understanding of prediction and ensure informed decision-making. The resulting model uses only two 0D and two 2D topological descriptors to compute molecular complexity. We develop a corresponding user-friendly app that takes in structured data files (SDF) files to rapidly quantify molecular complexity and provide a PMI target that can be used to drive process development activities. By integrating machine learning explainability and open-source accessibility, we provide flexible tools to advance the field of green chemistry and sustainable pharmaceutical manufacturing.
 
--------------------------------------------------------------------------------
-
-## 2. Getting Started
-
-Instructions for installing and using the package.
-
--------------------------------------------------------------------------------
-
-## 3. Known Issues
-
-No currently known issues.
-
--------------------------------------------------------------------------------
-
-## 4. Contributor Notes
-
-### 4.1. License
-
-The contents of this package are covered under the Apache License 2.0 (included
-in the `LICENSE` file). The copyright for this package is contained in the
-`NOTICE` file.
-
-### 4.2. Package Contents
+### 1.1. Package Contents
 
 ```
 ├── README.md          <- this file
@@ -73,7 +54,48 @@ in the `LICENSE` file). The copyright for this package is contained in the
 └── src/               <- package source code
 ```
 
-### 4.3. Setting Up a Development Environment
+### 1.2. License
+
+The contents of this package are covered under the MIT License (included
+in the `LICENSE` file).
+
+
+### 1.3. Known Issues
+
+There are currently no known issues for the package.
+
+-------------------------------------------------------------------------------
+
+## 2. App Usage (Demo)
+
+
+
+-------------------------------------------------------------------------------
+
+## 3. CLI Usage (Demo)
+
+The command line interface can be used for rapid experimentation of the models. The `train` command 
+takes in an `input` path pointing to the molecule source and will write the model and associated variables to the `output`` directory.
+    ```shell
+    $ python src/main.py train --input <path_to_data> --output_dir <path_to_directory> 
+    ```
+
+The following are accepted file formats for the `input` field:
+* directory of SDF files
+* file containing SMILES strings (csv, excel, (.obj or .pkl) dataframes)
+
+The `predict` command takes in similar inputs, and also includes specification of the model to use. If left blank, 
+the four-feature model described in the paper will be used as default. 
+    ```shell
+    $ python src/main.py predict --input <path_to_data> --output_dir <path_to_directory> --model <path_to_model>
+    ```
+
+-------------------------------------------------------------------------------
+
+## 4. Build Instructions
+Command line instructions for setting up the environment to run the package or the web app.
+
+### 4.1. Setting Up a Build Environment
 
 <strong><em>Note</em></strong>: this project uses `poetry` to manage Python
 package dependencies.
@@ -81,41 +103,22 @@ package dependencies.
 1. Prerequisites
 
    * Install [Git][git].
+     May require prerequisite installations, such as [Brew][brew] for MacOS.
 
-   * Install [Python][python] 3.9 (or greater).
+   * Install [Python][python] 3.8 (&le; 3.11).
      <strong><em>Recommendation</em></strong>: use `pyenv` to configure the
      project to use a specific version of Python.
 
    * Install [Poetry][poetry] 1.2 (or greater).
 
-   * <em>Optional</em>. Install [direnv][direnv].
 
 2. Set up a dedicated virtual environment for the project. Any of the common
    virtual environment options (e.g., `venv`, `direnv`, `conda`) should work.
-   Below are instructions for setting up a `direnv` or `poetry` environment.
+   Below are instructions for setting up a `poetry` environment.
 
    <strong><em>Note</em></strong>: to avoid conflicts between virtual
    environments, only one method should be used to manage the virtual
    environment.
-
-   * <strong>`direnv` Environment</strong>. <em>Note</em>: `direnv` manages the
-     environment for both Python and the shell.
-
-     * Prerequisite. Install `direnv`.
-
-     * Copy `extras/dot-envrc` to the project root directory, and rename it to
-       `.envrc`.
-
-       ```shell
-       $ cd $PROJECT_ROOT_DIR
-       $ cp extras/dot-envrc .envrc
-       ```
-
-     * Grant permission to direnv to execute the .envrc file.
-
-       ```shell
-       $ direnv allow
-       ```
 
    * <strong>`poetry` Environment</strong>. <em>Note</em>: `poetry` only
      manages the Python environment (it does not manage the shell environment).
@@ -129,18 +132,62 @@ package dependencies.
        $ poetry env use python3
        ```
 
+     * Configure a virtual environment just for the project.
+
+       ```shell
+       $ poetry config virtualenvs.in-project true
+       ```
+
        For commands to use other Python executables for the virtual environment,
        see the [Poetry Quick Reference][poetry-quick-reference].
 
-3. Install the Python package dependencies (including `dev`, `docs`, and `test`
-   dependencies).
+3. Install the Python package dependencies.
 
    ```shell
-   $ poetry install --with dev,docs,test
+   $ poetry install
    ```
 
-4. Install the git pre-commit hooks.
+### 4.2. Building the Web App
+
+4. Launch the web application from the commandline. For more details on usage, refer to Section 2.
 
    ```shell
-   $ pre-commit install
+   $ cd src
+   $ python -m webapp.index
    ```
+
+   Navigate to the link described in the terminal: `Dash is running on http://0.0.0.0:8050/`
+5. For model experimentation via the CLI, refer to Section 3.
+
+-------------------------------------------------------------------------------
+
+[----------------------------- INTERNAL LINKS -----------------------------]: #
+
+[#1]: #1-overview
+[#1.1]: #11-package-contents
+[#1.2]: #12-license
+[#1.3]: #13-known-issues
+
+[#2]: #2-app-usage-(demo)
+
+[#3]: #3-cli-usage-(demo)
+
+[#4]: #4-build-instructions
+[#4.1]: #41-setting-up-a-build-environment
+[#4.2]: #42-building-the-app
+[#2.3]: #23-installing-the-app
+
+
+[---------------------------- REPOSITORY LINKS ----------------------------]: #
+
+[poetry-quick-reference]: extras/references/Poetry-Quick-Reference.md
+
+[----------------------------- EXTERNAL LINKS -----------------------------]: #
+
+[git]: https://git-scm.com/
+
+[brew]: https://brew.sh/ 
+
+[python]: https://www.python.org/
+
+[poetry]: https://python-poetry.org/

@@ -29,7 +29,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "-m", "--model", type=str,
         help="path to load model for making predictions",
-        default="."
+        default='' # option to use default model
     )
     args = parser.parse_args()
     print('verbose: ', args.verbose)
@@ -41,4 +41,4 @@ if __name__ == '__main__':
     if args.cmd == 'train':
         train(args.input, args.output_dir)
     else:
-        predict(args.model, args.input, args.output_dir)
+        predict(args.input, args.output_dir, args.model)

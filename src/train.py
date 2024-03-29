@@ -130,11 +130,31 @@ def write_data(path, now,
     pickle.dump(X_test, open(f'{path}/x_test.pkl', 'wb'))
     pickle.dump(y_test, open(f'{path}/y_test.pkl', 'wb'))
     pickle.dump(removed, open(f'{path}/removed_cols', 'wb'))
-
+    print(f'... Saved to <{path}>')
 
 
 
 # -- GENERAL MODELING HELPER FUNCTIONS --
+    
+def make_predictions(model, X, y):
+    # print('model parameters', standard_model.get_params())
+    print('... Model Metrics ...')
+    pred = model.predict(X)
+    mae = mean_absolute_error(y, pred)
+    mse = mean_squared_error(y, pred)
+    rmse = mse ** .5
+    r2 = r2_score(y, pred)
+    scores = cross_val_score(model, X, y, scoring='r2', cv=5)
+    rmse_scores = cross_val_score(model, X, y, scoring='neg_root_mean_squared_error', cv=5)
+
+    print(' MAE', mae)
+    print(' MSE', mse)
+    print(' RMSE', rmse)
+    print(' R^2', r2)
+    print(' CV-R^2', scores)
+    print(' avg CV-R^2', np.mean(scores))
+    print(' avg CV-RMSE', np.mean(rmse_scores))
+
 
 def compute_model_scores(x_train, y_train, models: dict):
     '''
@@ -218,26 +238,6 @@ def rf_regress(train_x, train_y, val_split=0.8, grid_search=False):
     # now = datetime.now().strftime('%Y-%m-%d_%H%M%S')
     # pickle.dump(model, open(f'../data/model_{now}.pkl', 'wb'))
     return model
-
-
-def make_predictions(model, X, y):
-    # print('model parameters', standard_model.get_params())
-    print('...Validation...')
-    pred = model.predict(X)
-    mae = mean_absolute_error(y, pred)
-    mse = mean_squared_error(y, pred)
-    rmse = mse ** .5
-    r2 = r2_score(y, pred)
-    scores = cross_val_score(model, X, y, scoring='r2', cv=5)
-    rmse_scores = cross_val_score(model, X, y, scoring='neg_root_mean_squared_error', cv=5)
-
-    print(' MAE', mae)
-    print(' MSE', mse)
-    print(' RMSE', rmse)
-    print(' R^2', r2)
-    print(' CV-R^2', scores)
-    print(' avg CV-R^2', np.mean(scores))
-    print(' avg CV-RMSE', np.mean(rmse_scores))
 
 
 def base_model():
