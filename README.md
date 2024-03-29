@@ -76,6 +76,7 @@ There are currently no known issues for the package.
 
 The command line interface can be used for rapid experimentation of the models. The `train` command 
 takes in an `input` path pointing to the molecule source and will write the model and associated variables to the `output`` directory.
+
     ```shell
     $ python src/main.py train --input <path_to_data> --output_dir <path_to_directory> 
     ```
@@ -86,6 +87,7 @@ The following are accepted file formats for the `input` field:
 
 The `predict` command takes in similar inputs, and also includes specification of the model to use. If left blank, 
 the four-feature model described in the paper will be used as default. 
+
     ```shell
     $ python src/main.py predict --input <path_to_data> --output_dir <path_to_directory> --model <path_to_model>
     ```
@@ -141,23 +143,28 @@ package dependencies.
        For commands to use other Python executables for the virtual environment,
        see the [Poetry Quick Reference][poetry-quick-reference].
 
-3. Install the Python package dependencies.
+3. Once the repository has been cloned locally, navigate inside working directory 
+and install the Python package dependencies.
 
    ```shell
+   $ cd PROJECT-ROOT-DIR (e.g./OpenSMART-PMI)
    $ poetry install
    ```
 
-### 4.2. Building the Web App
+### 4.2. Using the Apps
 
-4. Launch the web application from the commandline. For more details on usage, refer to Section 2.
+1. Launching the web application from the command line. 
+
+For more details on usage, refer to Section 2.
 
    ```shell
    $ cd src
    $ python -m webapp.index
    ```
 
-   Navigate to the link described in the terminal: `Dash is running on http://0.0.0.0:8050/`
-5. For model experimentation via the CLI, refer to Section 3.
+   Navigate to the link described in the terminal: `Dash is running on` `http://0.0.0.0:8050/` (example)
+
+2. For model experimentation via the CLI, refer to Section 3.
 
 -------------------------------------------------------------------------------
 
