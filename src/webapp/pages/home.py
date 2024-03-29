@@ -82,7 +82,7 @@ def compute_pmi(content, name):
 def persist_sdf_data(content, name):
     content_type, content_string = content.split(',')
     decoded = base64.b64decode(content_string)
-    with open('sample/uploaded.sdf', 'wb') as f:
+    with open('tmp/uploaded.sdf', 'wb') as f:
         f.write(decoded)
     return decoded
 
@@ -90,7 +90,8 @@ def persist_sdf_data(content, name):
 def read_sdf_data(content, name):
     content_type, content_string = content.split(',')
     decoded = base64.b64decode(content_string)
-    random_filename = f'sample/{int(time.monotonic()*1000)}.sdf'
+    os.makedirs('tmp', exist_ok=True)
+    random_filename = f'tmp/{int(time.monotonic()*1000)}.sdf'
     with open(random_filename, 'wb') as f:
         f.write(decoded)
 

@@ -52,12 +52,13 @@ def read_sdf_files(names):
     
     return df
 
+
 def read_input(input):
         input_ext = input[-4:]
 
         # path for predicting from directory of SDF files 
         if os.path.isdir(input):
-            assert os.path.exists(input_dir), f"Input dir: {input_dir} does not exists"
+            assert os.path.exists(input), f"Input dir: {input} does not exists"
             input_dir = input
             filenames = list(glob(f"{input_dir}/*.sdf"))
             df = read_sdf_files(filenames)
