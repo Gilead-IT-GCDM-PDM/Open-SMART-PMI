@@ -204,9 +204,9 @@ and install the Python package dependencies.
 [#1.2]: #12-license
 [#1.3]: #13-known-issues
 
-[#2.]: #2-web-app-usage-instructions
+[#2]: #2-web-app-usage-instructions
 
-[#3.]: #3-cli-usage-instructions
+[#3]: #3-cli-usage-instructions
 
 [#4.]: #4-build-instructions
 [#4.1]: #41-setting-up-a-build-environment
