@@ -25,9 +25,9 @@ Table of Contents
 
    1.3. [Known Issues][#1.3]
 
-2. [App Usage (Demo)][#2]
+2. [Demo: App Usage][#2]
 
-3. [CLI Usage (Demo)][#3]
+3. [Demo: CLI Usage][#3]
 
 4. [CLI Build Instructions][#4]
 
@@ -66,7 +66,7 @@ There are currently no known issues for the package.
 
 -------------------------------------------------------------------------------
 
-## 2. App Usage (Demo)
+## 2. Demo: App Usage
 
 The web application is depicted below. Users can upload ChemDraw .SDF files and generate rapid predictions about
 the respective molecular complexity and SMART-PMI. The predictive model, GS-04, is further detailed in the paper.
@@ -76,10 +76,9 @@ The application must be installed locally and is stateless to ensure data privac
 command line [Section 4] or via Docker. The latter is recommended for those with limited programming experience.
 
  ![image](src/webapp/assets/web-app.jpg)
-
 -------------------------------------------------------------------------------
 
-## 3. CLI Usage (Demo)
+## 3. Demo: CLI Usage
 
 The command line interface can be used for rapid experimentation of the models. The `train` command 
 takes in an `input` path pointing to the molecule source and will write the model and associated variables to the `output` directory.
@@ -194,9 +193,9 @@ and install the Python package dependencies.
 [#1.2]: #12-license
 [#1.3]: #13-known-issues
 
-[#2.]: #2-app-usage
+[#2.]: #2-demo-app-usage
 
-[#3.]: #3-cli-usage
+[#3.]: #3-demo-cli-usage
 
 [#4.]: #4-build-instructions
 [#4.1]: #41-setting-up-a-build-environment
