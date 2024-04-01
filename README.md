@@ -33,7 +33,7 @@ Table of Contents
 
    4.1. [Setting Up a Build Environment][#4.1]
 
-   4.2. [Building the App][#4.2]
+   4.2. [Using the Apps][#4.2]
 
 
 -------------------------------------------------------------------------------
@@ -82,6 +82,17 @@ command line [Section 4] or via Docker. The latter is recommended for those with
 
  ![image](src/webapp/assets/web-app.jpg)
 
+To launch the web application from the command line:
+
+   ```shell
+   $ cd src
+   $ python -m webapp.index
+   ```
+
+Navigate to the link described in the terminal.
+   For example: `Dash is running on` `http://0.0.0.0:8050/`
+
+To exit the app on the command line, use `CTRL+C`
 -------------------------------------------------------------------------------
 
 ## 3. CLI Usage Instructions
@@ -137,11 +148,15 @@ package dependencies.
 
    * Install [Poetry][poetry] 1.2 (or greater).
 
-   * Clone this repository.
+   * Clone or download this repository.
 
+2. Navigate inside the repository.
 
+   ```shell
+   $ cd PROJECT-ROOT-DIR     <--(e.g.  .../OpenSMART-PMI)
+   ```
 
-2. Set up a dedicated virtual environment for the project. Any of the common
+3. Set up a dedicated virtual environment for the project. Any of the common
    virtual environment options (e.g., `venv`, `direnv`, `conda`) should work.
    Below are instructions for setting up a `poetry` environment.
 
@@ -171,17 +186,18 @@ package dependencies.
        see the [Poetry Quick Reference][poetry-quick-reference].
 
 
-3. Once the repository has been cloned locally, navigate inside working directory 
-and install the Python package dependencies.
+4. Install the package dependencies. Any of the common package managers (e.g. `pip`, `poetry`) should work. 
+   Below are instructions using the `poetry` manager.
 
    ```shell
-   $ cd PROJECT-ROOT-DIR     <--(e.g.  .../OpenSMART-PMI)
    $ poetry install
    ```
 
-### 4.2. Using the Apps
+5. The package is now ready to use anytime. The above instructions can now be skipped when using the apps.
 
-1. Launching the web application from the command line. 
+## 4.2. Using the Apps
+
+1. <strong><em>Web Application</em></strong>: Launching the web application from the command line. 
 
    ```shell
    $ cd src
@@ -193,7 +209,9 @@ and install the Python package dependencies.
 
    For more details on usage, refer to Section 2.
 
-2. For model experimentation via the CLI, refer to Section 3.
+   To exit the app on the command line, use `CTRL+C`
+
+2. <strong><em>CLI Model Exeperimentation</em></strong>: Refer to Section 3.
 
 -------------------------------------------------------------------------------
 
@@ -210,9 +228,7 @@ and install the Python package dependencies.
 
 [#4]: #4-build-instructions
 [#4.1]: #41-setting-up-a-build-environment
-[#4.2]: #42-building-the-app
-[#2.3]: #23-installing-the-app
-
+[#4.2]: #42-using-the-apps
 
 [---------------------------- REPOSITORY LINKS ----------------------------]: #
 
