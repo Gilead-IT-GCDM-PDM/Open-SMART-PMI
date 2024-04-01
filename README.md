@@ -47,12 +47,11 @@ The application of green chemistry is critical for cultivating environmental res
 ```
 ├── README.md          <- this file
 ├── LICENSE            <- package license
-├── NOTICE             <- package copyright notice
-├── pyproject.toml     <- Python project metadata file
-├── poetry.lock        <- Poetry lockfile
-├── models/            <- saved models
 ├── data/              <- saved data (supplementary data from Merck)
-└── src/               <- package source code and programs
+├── models/            <- saved models
+├── src/               <- package source code and programs
+├── pyproject.toml     <- Python project metadata file
+└── poetry.lock        <- Poetry lockfile
 ```
 
 ### 1.2. License
@@ -76,14 +75,14 @@ One or more molecules (in ChemDraw .SDF files) can be uploaded for analysis.
 The application must be installed locally and is stateless to ensure data privacy. Installation can be done through the 
 command line [Section 4] or via Docker. The latter is recommended for those with limited programming experience.
 
- ![image](./src/webapp/assets/web-app.jpg)
+ ![image](src/webapp/assets/web-app.jpg)
 
 -------------------------------------------------------------------------------
 
 ## 3. CLI Usage (Demo)
 
 The command line interface can be used for rapid experimentation of the models. The `train` command 
-takes in an `input` path pointing to the molecule source and will write the model and associated variables to the `output`` directory.
+takes in an `input` path pointing to the molecule source and will write the model and associated variables to the `output` directory.
 
    ```shell
     $ python src/main.py train --input <path_to_data> --output_dir <path_to_directory> 
@@ -117,16 +116,20 @@ Command line instructions for setting up the environment to run the package or t
 <strong><em>Note</em></strong>: this project uses `poetry` to manage Python
 package dependencies.
 
-1. Prerequisites
+1. <strong><em>Prerequisites</strong></em>
 
    * Install [Git][git].
+   
      May require prerequisite installations, such as [Brew][brew] for MacOS.
 
-   * Install [Python][python] 3.8 (&le; 3.11). 
+   * Install [Python][python] 3.10 (&le; 3.11). 
+
      <strong><em>Recommendation</em></strong>: use `pyenv` to configure the
      project to use a specific version of Python.
 
    * Install [Poetry][poetry] 1.2 (or greater).
+
+   * Clone this repository.
 
 
 2. Set up a dedicated virtual environment for the project. Any of the common
@@ -162,7 +165,7 @@ package dependencies.
 and install the Python package dependencies.
 
    ```shell
-   $ cd PROJECT-ROOT-DIR (e.g.  .../OpenSMART-PMI)
+   $ cd PROJECT-ROOT-DIR     <--(e.g.  .../OpenSMART-PMI)
    $ poetry install
    ```
 
@@ -191,11 +194,11 @@ and install the Python package dependencies.
 [#1.2]: #12-license
 [#1.3]: #13-known-issues
 
-[#2]: #2-app-usage-(demo)
+[#2.]: #2-app-usage
 
-[#3]: #3-cli-usage-(demo)
+[#3.]: #3-cli-usage
 
-[#4]: #4-build-instructions
+[#4.]: #4-build-instructions
 [#4.1]: #41-setting-up-a-build-environment
 [#4.2]: #42-building-the-app
 [#2.3]: #23-installing-the-app
