@@ -208,7 +208,7 @@ and install the Python package dependencies.
 
 [#3]: #3-cli-usage-instructions
 
-[#4.]: #4-build-instructions
+[#4]: #4-build-instructions
 [#4.1]: #41-setting-up-a-build-environment
 [#4.2]: #42-building-the-app
 [#2.3]: #23-installing-the-app
