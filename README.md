@@ -197,7 +197,7 @@ package dependencies.
 
 ### 4.2. Using the Apps
 
-1. <strong><em>Web Application</em></strong>: Launching the web application from the command line. 
+1. <strong>Web Application</strong>: Launching the web application from the command line. 
 
    ```shell
    $ cd src
@@ -211,7 +211,7 @@ package dependencies.
 
    To exit the app on the command line, use `CTRL+C`
 
-2. <strong><em>CLI Model Exeperimentation</em></strong>: Refer to Section 3.
+2. <strong>CLI Model Exeperimentation</strong>: Refer to Section 3.
 
 -------------------------------------------------------------------------------
 
