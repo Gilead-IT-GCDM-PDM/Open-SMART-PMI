@@ -6,7 +6,7 @@ import pandas as pd
 from glob import glob
 from datetime import datetime
 import rdkit.Chem
-from rdkit.Chem import Draw, PandasTools
+from rdkit.Chem import PandasTools
 
 # -- PACKAGE IMPORTS -- 
 import molecular_descriptors

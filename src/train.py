@@ -5,13 +5,8 @@ import pandas as pd
 from datetime import datetime
 
 from sklearn.model_selection import train_test_split, RandomizedSearchCV, cross_val_score
-from sklearn.model_selection import train_test_split, StratifiedKFold, GridSearchCV, cross_val_score
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.neural_network import MLPRegressor
-from sklearn.svm import SVR
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.cross_decomposition import PLSRegression
 from sklearn.preprocessing import MinMaxScaler
 
 import molecular_descriptors
