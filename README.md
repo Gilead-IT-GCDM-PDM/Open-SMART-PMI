@@ -38,9 +38,13 @@ Table of Contents
 
 -------------------------------------------------------------------------------
 
+
+
 ## 1. Overview
 
 The application of green chemistry is critical for cultivating environmental responsibility and sustainable practices in pharmaceutical manufacturing. Process Mass Intensity (PMI) is a key metric which quantifies the resource efficiency of a manufacturing process, but determining what constitutes a successful PMI of a specific molecule is challenging. A recent approach utilized the inherent complexity of the molecule to determine PMI targets from the chemical structure alone. While recent machine learning tools show promise in predicting molecular complexity, a more extensive application could significantly optimize manufacturing processes. To this end, we refine and expand upon the SMART-PMI tool by Sheridan et al. to create an open-source model and application. Our solution emphasizes explainability and parsimony to facilitate a nuanced understanding of prediction and ensure informed decision-making. The resulting model uses only two 0D and two 2D topological descriptors to compute molecular complexity. We develop a corresponding user-friendly app that takes in structured data files (SDF) files to rapidly quantify molecular complexity and provide a PMI target that can be used to drive process development activities. By integrating machine learning explainability and open-source accessibility, we provide flexible tools to advance the field of green chemistry and sustainable pharmaceutical manufacturing.
+
+
 
 ### 1.1. Package Contents
 
@@ -53,6 +57,7 @@ The application of green chemistry is critical for cultivating environmental res
 ├── pyproject.toml     <- Python project metadata file
 └── poetry.lock        <- Poetry lockfile
 ```
+
 
 ### 1.2. License
 
@@ -76,6 +81,7 @@ The application must be installed locally and is stateless to ensure data privac
 command line [Section 4] or via Docker. The latter is recommended for those with limited programming experience.
 
  ![image](src/webapp/assets/web-app.jpg)
+
 -------------------------------------------------------------------------------
 
 ## 3. Demo: CLI Usage
@@ -105,10 +111,13 @@ For more help and options, run
    $ python src/main.py --help
    ```
 
+
 -------------------------------------------------------------------------------
+
 
 ## 4. Build Instructions
 Command line instructions for setting up the environment to run the package or the web app.
+
 
 ### 4.1. Setting Up a Build Environment
 
@@ -129,6 +138,7 @@ package dependencies.
    * Install [Poetry][poetry] 1.2 (or greater).
 
    * Clone this repository.
+
 
 
 2. Set up a dedicated virtual environment for the project. Any of the common
@@ -159,6 +169,7 @@ package dependencies.
 
        For commands to use other Python executables for the virtual environment,
        see the [Poetry Quick Reference][poetry-quick-reference].
+
 
 3. Once the repository has been cloned locally, navigate inside working directory 
 and install the Python package dependencies.
@@ -193,9 +204,9 @@ and install the Python package dependencies.
 [#1.2]: #12-license
 [#1.3]: #13-known-issues
 
-[#2.]: #2-demo-app-usage
+[#2.]: #2-demo:-app-usage
 
-[#3.]: #3-demo-cli-usage
+[#3.]: #3-demo:-cli-usage
 
 [#4.]: #4-build-instructions
 [#4.1]: #41-setting-up-a-build-environment
