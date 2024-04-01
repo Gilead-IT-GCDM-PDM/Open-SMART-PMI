@@ -71,7 +71,7 @@ There are currently no known issues for the package.
 
 -------------------------------------------------------------------------------
 
-## 2. Web App Usage
+## 2. Web App Usage Instructions
 
 The web application is depicted below. Users can upload ChemDraw .SDF files and generate rapid predictions about
 the respective molecular complexity and SMART-PMI. The predictive model, GS-04, is further detailed in the paper.
@@ -84,7 +84,7 @@ command line [Section 4] or via Docker. The latter is recommended for those with
 
 -------------------------------------------------------------------------------
 
-## 3. CLI Usage
+## 3. CLI Usage Instructions
 
 The command line interface can be used for rapid experimentation of the models. The `train` command 
 takes in an `input` path pointing to the molecule source and will write the model and associated variables to the `output` directory.
