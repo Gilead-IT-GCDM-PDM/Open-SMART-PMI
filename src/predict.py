@@ -12,24 +12,7 @@ from rdkit.Chem import Draw, PandasTools
 import molecular_descriptors
 
 
-"""
-#FIXME
-def make_predictions(filenames):
-    # -- processing new molecules
-
-    df = read_sdf_files(filenames)
-    X_new = prepare_data(df.SMILES)
-
-    gs_04_model = pickled_model()
-
-    df['Predictions'] = gs_04_model.predict(X_new[['UNIQUETT', 'NumAtomStereoCenters', 'NumHeteroatoms', 'chi4n',]])
-
-    # FIXME: add mol wt and smart-pmi conversion
-    # output predictions
-    return df
-"""
-
-# Set path for Model GS-04
+# -- Set path for Model GS-04
 
 MODEL_GS_04 = os.path.join(
     os.path.dirname(__file__),
@@ -38,52 +21,17 @@ MODEL_GS_04 = os.path.join(
     'GS_04_Model_attrs.obj'
 )
 
+# -- PREDICTION MODULE
 
-def read_sdf_files(names):
-    dfs = []
-    # convert SDF to SMILES
-    for file in names:
-        load_mol = rdkit.Chem.PandasTools.LoadSDF(file, smilesName='SMILES').head(1)
-        dfs += [load_mol]
+def calculate_smart_pmi(r):
+    '''
+    Calculation of SMART-PMI score using complexity
+    '''
+    mol_wt = r['MW']
+    complexity = r['Complexity']
+    smart_pmi = (0.13 * mol_wt) + (177 * complexity) - 252
+    return round(smart_pmi, 2)
 
-    df = pd.concat(dfs)
-    df['ID'] = names
-    df.reset_index(drop=True, inplace=True)
-    
-    return df
-
-
-def read_input(input):
-        input_ext = input[-4:]
-
-        # path for predicting from directory of SDF files 
-        if os.path.isdir(input):
-            assert os.path.exists(input), f"Input dir: {input} does not exists"
-            input_dir = input
-            filenames = list(glob(f"{input_dir}/*.sdf"))
-            df = read_sdf_files(filenames)
-
-        # path for predicting from csv or excel file
-        elif ('.csv' in input_ext) | ('.txt' in input_ext):
-            df = pd.read_csv(input)
-        elif ('.xls' in input_ext):
-            df = pd.read_excel(input)
-
-        # path for predicting from pickled dataframe
-        elif ('.obj' in input_ext) | ('.pkl' in input_ext):
-            with open(input, 'rb') as f:
-                df = pickle.load(f)
-
-        return df
-
-"""
-# FIXME
-def prepare_data(data):
-    assert set(['SMILES', 'meanComplexity']) <= set(data.columns)
-    y_new = data.meanComplexity.loc[X_new.index]
-
-    return X_new, y_new
-"""
 
 def predict(input, output_dir, model_path=''):
     '''
@@ -134,13 +82,6 @@ def make_predictions(x, model_path=MODEL_GS_04):
     return res.round(3)
 
 
-def calculate_smart_pmi(r):
-    mol_wt = r['MW']
-    complexity = r['Complexity']
-    smart_pmi = (0.13 * mol_wt) + (177 * complexity) - 252
-    return round(smart_pmi, 2)
-
-
 def read_sdf_files(names):
     dfs = []
     # convert SDF to SMILES
@@ -159,7 +100,7 @@ def read_input(input):
 
         # path for predicting from directory of SDF files 
         if os.path.isdir(input):
-            assert os.path.exists(input_dir), f"Input dir: {input_dir} does not exists"
+            assert os.path.exists(input), f"Input dir: {input} does not exists"
             input_dir = input
             filenames = list(glob(f"{input_dir}/*.sdf"))
             df = read_sdf_files(filenames)
@@ -177,20 +118,9 @@ def read_input(input):
 
         return df
 
-"""
-# FIXME
-def prepare_data(data):
-    assert set(['SMILES', 'meanComplexity']) <= set(data.columns)
-    y_new = data.meanComplexity.loc[X_new.index]
-
-    return X_new, y_new
-"""
-
 
 def generate_output(df, output_dir):
     now = datetime.now().strftime('%y-%m-%d-%H%M%S')
     output_path = os.path.join(output_dir, f'predictions_{now}.csv')
     df.to_csv(output_path, index=False)  #, engine=openpyxl)
     print(f'... Writing predictions to {output_path}')
-
-# think about docker for webapp
