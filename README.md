@@ -85,9 +85,9 @@ command line [Section 4] or via Docker. The latter is recommended for those with
 The command line interface can be used for rapid experimentation of the models. The `train` command 
 takes in an `input` path pointing to the molecule source and will write the model and associated variables to the `output`` directory.
 
-    ```shell
+   ```shell
     $ python src/main.py train --input <path_to_data> --output_dir <path_to_directory> 
-    ```
+   ```
 
 The following are accepted file formats as `input`:
 * directory of SDF files
@@ -97,9 +97,9 @@ The following are accepted file formats as `input`:
 The `predict` command takes in similar inputs, and also includes an optional specification of the `model` to use. If left blank, 
 the four-feature model described in the paper (GS-04) is used as default. 
 
-    ```shell
+   ```shell
     $ python src/main.py predict --input <path_to_data> --output_dir <path_to_directory> --model <path_to_model>
-    ```
+   ```
 
 For more help and options, run 
 
@@ -122,7 +122,7 @@ package dependencies.
    * Install [Git][git].
      May require prerequisite installations, such as [Brew][brew] for MacOS.
 
-   * Install [Python][python] 3.8 (&le; 3.11).
+   * Install [Python][python] 3.8 (&le; 3.11). 
      <strong><em>Recommendation</em></strong>: use `pyenv` to configure the
      project to use a specific version of Python.
 
@@ -162,7 +162,7 @@ package dependencies.
 and install the Python package dependencies.
 
    ```shell
-   $ cd PROJECT-ROOT-DIR (e.g./OpenSMART-PMI)
+   $ cd PROJECT-ROOT-DIR (e.g.  .../OpenSMART-PMI)
    $ poetry install
    ```
 
@@ -175,7 +175,9 @@ and install the Python package dependencies.
    $ python -m webapp.index
    ```
 
-   Navigate to the link described in the terminal: `Dash is running on` `http://0.0.0.0:8050/` (example)
+   Navigate to the link described in the terminal.
+      For example: `Dash is running on` `http://0.0.0.0:8050/`
+
    For more details on usage, refer to Section 2.
 
 2. For model experimentation via the CLI, refer to Section 3.
