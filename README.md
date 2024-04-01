@@ -195,7 +195,7 @@ package dependencies.
 
 5. The package is now ready to use anytime. The above instructions can now be skipped when using the apps.
 
-## 4.2. Using the Apps
+### 4.2. Using the Apps
 
 1. <strong><em>Web Application</em></strong>: Launching the web application from the command line. 
 
