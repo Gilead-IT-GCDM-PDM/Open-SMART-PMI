@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "OpenSMART-PMI"
+version = "0.1.0"
+description = ""
+authors = ["nicoletin-gilead <nicole.tin1@gilead.com>"]
+readme = "README.md"
+# packages = [{include = "OpenSMART-PMI"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+numpy = "1.22.4"
+pandas = "1.4.3"
+matplotlib = "3.5.2"
+rdkit = "2022.3.5"
+mordred = "1.2.0"
+scikit-learn = "1.1.2"
+dtreeviz = ">=2.1"
+plotly = "5.9.0"
+rdkit-pypi = "2022.3.4"
+seaborn = "0.11.2"
+statsmodels = "0.13.2"
+ipykernel = "^6.22.0"
+xgboost = "^1.7.5"
+tqdm = "^4.65.0"
+imblearn = "^0.0"
+nbformat = "^5.8.0"
+deepchem = "^2.7.1"
+jupyter = "^1.0.0"
+ipywidgets = "^8.1.1"
+openpyxl = "^3.1.2"
+dash = "^2.16.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
