@@ -85,14 +85,15 @@ command line [Section 4] or via Docker. The latter is recommended for those with
 To launch the web application from the command line:
 
    ```shell
-   $ cd src
-   $ python -m webapp.index
+     cd src
+     python -m webapp.index
    ```
 
 Navigate to the link described in the terminal.
    For example: `Dash is running on` `http://0.0.0.0:8050/`
 
 To exit the app on the command line, use `CTRL+C`
+
 -------------------------------------------------------------------------------
 
 ## 3. CLI Usage Instructions
@@ -101,7 +102,7 @@ The command line interface can be used for rapid experimentation of the models. 
 takes in an `input` path pointing to the molecule source and will write the model and associated variables to the `output` directory.
 
    ```shell
-    $ python src/main.py train --input <path_to_data> --output_dir <path_to_directory> 
+     poetry run python src/main.py train --input <path_to_data> --output_dir <path_to_directory> 
    ```
 
 The following are accepted file formats as `input`:
@@ -113,13 +114,13 @@ The `predict` command takes in similar inputs, and also includes an optional spe
 the four-feature model described in the paper (GS-04) is used as default. 
 
    ```shell
-    $ python src/main.py predict --input <path_to_data> --output_dir <path_to_directory> --model <path_to_model>
+     poetry run python src/main.py predict --input <path_to_data> --output_dir <path_to_directory> --model <path_to_model>
    ```
 
 For more help and options, run 
 
    ```shell
-   $ python src/main.py --help
+    poetry run python src/main.py --help
    ```
 
 
@@ -153,7 +154,7 @@ package dependencies.
 2. Navigate inside the repository.
 
    ```shell
-   $ cd PROJECT-ROOT-DIR     <--(e.g.  .../OpenSMART-PMI)
+    cd PROJECT-ROOT-DIR     <--(e.g.  .../OpenSMART-PMI)
    ```
 
 3. Set up a dedicated virtual environment for the project. Any of the common
@@ -173,13 +174,13 @@ package dependencies.
        that uses `python3`.
 
        ```shell
-       $ poetry env use python3
+        poetry env use python3
        ```
 
      * Configure a virtual environment just for the project.
 
        ```shell
-       $ poetry config virtualenvs.in-project true
+        poetry config virtualenvs.in-project true
        ```
 
        For commands to use other Python executables for the virtual environment,
@@ -190,7 +191,7 @@ package dependencies.
    Below are instructions using the `poetry` manager.
 
    ```shell
-   $ poetry install
+    poetry install
    ```
 
 5. The package is now ready to use anytime. The above instructions can now be skipped when using the apps.
@@ -200,8 +201,8 @@ package dependencies.
 1. <strong>Web Application</strong>: Launching the web application from the command line. 
 
    ```shell
-   $ cd src
-   $ python -m webapp.index
+    cd src
+    poetry run python -m webapp.index
    ```
 
    Navigate to the link described in the terminal.

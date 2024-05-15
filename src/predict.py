@@ -23,7 +23,7 @@ MODEL_GS_04 = os.path.join(
 
 # -- PREDICTION MODULE
 
-def calculate_smart_pmi(r):
+def calculate_smart_pmi(r:pd.DataFrame) -> pd.DataFrame:
     '''
     Calculation of SMART-PMI score using complexity
     '''
@@ -33,10 +33,12 @@ def calculate_smart_pmi(r):
     return round(smart_pmi, 2)
 
 
-def predict(input, output_dir, model_path=''):
+def predict(input:str, output_dir:str, model_path:str='') -> pd.DataFrame:
     '''
     predict the complexity and SMART-PMI of a given molecule(s). 
 
+    Arguments:
+    ---
     `model_path`: path to the chosen model object
     `input`: the molecule source with. `input` is compatible with:
         (1) a directory of .SDF files 
@@ -62,7 +64,7 @@ def predict(input, output_dir, model_path=''):
         traceback.print_exc()
 
 
-def make_predictions(x, model_path=MODEL_GS_04):
+def make_predictions(x, model_path=MODEL_GS_04) -> pd.DataFrame:
     '''
     Use given model to make molecular complexity and SMART-PMI predictions
     '''
@@ -86,32 +88,31 @@ def read_sdf_files(names):
     dfs = []
     # convert SDF to SMILES
     for file in names:
-        load_mol = rdkit.Chem.PandasTools.LoadSDF(file, smilesName='SMILES').head(1)
+        load_mol = PandasTools.LoadSDF(file, smilesName='SMILES').head(1)
         dfs += [load_mol]
 
     df = pd.concat(dfs)
     df['ID'] = names
     df.reset_index(drop=True, inplace=True)
-    
     return df
 
-def read_input(input):
+def read_input(input:str) -> pd.DataFrame:
         input_ext = input[-4:]
 
-        # path for predicting from directory of SDF files 
+        # read directory of SDF files 
         if os.path.isdir(input):
             assert os.path.exists(input), f"Input dir: {input} does not exists"
             input_dir = input
             filenames = list(glob(f"{input_dir}/*.sdf"))
             df = read_sdf_files(filenames)
 
-        # path for predicting from csv or excel file
+        # read csv or excel file
         elif ('.csv' in input_ext) | ('.txt' in input_ext):
             df = pd.read_csv(input)
         elif ('.xls' in input_ext):
             df = pd.read_excel(input)
 
-        # path for predicting from pickled dataframe
+        # read pickled dataframe
         elif ('.obj' in input_ext) | ('.pkl' in input_ext):
             with open(input, 'rb') as f:
                 df = pickle.load(f)
@@ -119,7 +120,7 @@ def read_input(input):
         return df
 
 
-def generate_output(df, output_dir):
+def generate_output(df, output_dir) -> None:
     now = datetime.now().strftime('%y-%m-%d-%H%M%S')
     output_path = os.path.join(output_dir, f'predictions_{now}.csv')
     df.to_csv(output_path, index=False)  #, engine=openpyxl)

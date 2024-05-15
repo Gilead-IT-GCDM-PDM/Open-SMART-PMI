@@ -1,3 +1,4 @@
+# -- STANDARD IMPORTS --
 import os
 import pickle
 import numpy as np
@@ -9,19 +10,21 @@ from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import MinMaxScaler
 
+# -- PACKAGE IMPORTS --
 import molecular_descriptors
 from predict import read_input
 
 # -- TRAINING MODULE --
 
-def train(data_path, output_dir, grid_search=True):
+def train(data_path:str, output_dir:str, grid_search=True) -> None:
     '''
-    main training loop to preprocess the data and train a model
+    Main training loop to preprocess the data and train a model
 
-    `data_path`: path to the chosen model object
+    Arguments
+    ---
+    `data_path`: path to compound file SDFs or SMILES
     `output_dir`: path to store model and experiment results
     `grid_search`: perform grid search for hyperparameter tuning
-    
     '''
     # create output directory
     data = read_input(data_path)
@@ -29,7 +32,6 @@ def train(data_path, output_dir, grid_search=True):
     path = os.path.join(output_dir, 'model_'+now)
     os.mkdir(path=path)
 
-    # FIXME
     X = molecular_descriptors.compute(data.SMILES)
     y = data.meanComplexity.loc[X.index]
 
@@ -63,17 +65,9 @@ def train(data_path, output_dir, grid_search=True):
 
 # -- DATA FILTERING -- 
 
-def read_data(filename):
-    data = pd.read_csv(filename)
-    data = data[:100]
-    assert 'SMILES' in data.columns, "Missing SMILES column in data"
-    assert 'meanComplexity' in data.columns, "Missing meanComplexity column in data"
-    return data
-
-
-def filter_columns(df):
+def filter_columns(df) -> set[str]:
     """ 
-    dispose of columns that contain many null or error objects
+    Return set of columns that contain largely null or error objects
     """
     nonnumerics = df.copy().drop(columns=['SMILES']).select_dtypes(exclude='number').applymap(type).apply(set).to_frame()
     ind = pd.get_dummies(nonnumerics.explode(0))
@@ -87,10 +81,9 @@ def filter_columns(df):
     return nulls
 
 
-def filter_test_rm_low_var(df):
+def filter_test_rm_low_var(df) -> set[str]:
     '''
-    Apply filtering steps (generated from training set) on test set
-    Additionally remove variables of low variance
+    Use training set data to remove variables of low variance
     '''
     dff = df.astype(float)
     m = len(dff.columns)
@@ -115,7 +108,7 @@ def write_data(path, now,
                X_train, y_train, X_test, y_test,
                removed):
     '''
-    Write data to experiment folder
+    Save variables to experiment folder
     '''
     pickle.dump(model_aattrs, open(f'{path}/{now}_model_aattrs.pkl', 'wb'))
     pickle.dump(X_train, open(f'{path}/x_train.pkl', 'wb'))
@@ -130,7 +123,9 @@ def write_data(path, now,
 # -- GENERAL MODELING HELPER FUNCTIONS --
     
 def make_predictions(model, X, y):
-    # print('model parameters', standard_model.get_params())
+    '''
+    Compute and print model metrics to terminal
+    '''
     print('... Model Metrics ...')
     pred = model.predict(X)
     mae = mean_absolute_error(y, pred)
@@ -151,7 +146,7 @@ def make_predictions(model, X, y):
 
 def compute_model_scores(x_train, y_train, models: dict):
     '''
-    general helper function to quickly evaluate models
+    Generalized helper function to quickly evaluate models
     '''
     scores = {}
     model_info = {}
@@ -228,8 +223,6 @@ def rf_regress(train_x, train_y, val_split=0.8, grid_search=False):
     train_x = train_x.astype(float)
     model.fit(train_x, train_y)
 
-    # now = datetime.now().strftime('%Y-%m-%d_%H%M%S')
-    # pickle.dump(model, open(f'../data/model_{now}.pkl', 'wb'))
     return model
 
 
