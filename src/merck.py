@@ -21,7 +21,8 @@ def rf_using_old_attrs():
     # dict_m = {'rf': m}
     # train.compute_model_scores(data.iloc[:, 6:], data.loc[:, 'meanComplexity'], dict_m)
     # train.make_predictions(m, data.iloc[:301, 6:], data.loc[:300, 'meanComplexity'])
-    train.make_predictions(m.best_estimator_, data.iloc[:, 6:], data.loc[:, 'meanComplexity'])
+    # train.make_predictions(m.best_estimator_, data.iloc[:, 6:], data.loc[:, 'meanComplexity'])
+    train.make_predictions(m, data.iloc[:, 6:], data.loc[:, 'meanComplexity'])
 
 
 if __name__ == '__main__':

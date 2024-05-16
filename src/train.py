@@ -192,13 +192,13 @@ def rf_regress(train_x, train_y, val_split=0.8, grid_search=False):
         # -- Parameter Tuning
         random_grid = {}
         # Maximum number of levels in tree
-        max_depth = range(1, 7)
+        max_depth = range(1, 8)
         random_grid['max_depth'] = max_depth
         # Minimum number of samples required at each leaf node
-        min_samples_leaf = [2, 4, 6, 10]
+        min_samples_leaf = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 20]
         random_grid['min_samples_leaf'] = min_samples_leaf
         # Number of trees, reduce overfitting
-        n_estimators = [int(x) for x in np.linspace(start=50, stop=1000, num=10)]
+        n_estimators = [int(x) for x in np.linspace(start=50, stop=1000, num=5)]
         random_grid['n_estimators'] = n_estimators
 
         # # Number of trees in random forest
@@ -208,7 +208,7 @@ def rf_regress(train_x, train_y, val_split=0.8, grid_search=False):
         max_features = [None, 'sqrt', 'log2']
         random_grid['max_features'] = max_features
         # Minimum number of samples required to split a node
-        min_samples_split = [5, 10, 20, 30]
+        min_samples_split = [5, 10, 15, 20, 25, 30]
         random_grid['min_samples_split'] = min_samples_split
         # Method of selecting samples for training each tree
         bootstrap = [True, False]
