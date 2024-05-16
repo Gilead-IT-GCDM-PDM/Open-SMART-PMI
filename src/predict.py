@@ -75,11 +75,13 @@ def make_predictions(x, model_path=MODEL_GS_04) -> pd.DataFrame:
     X = molecular_descriptors.compute(smiles)
 
     res = pd.DataFrame()
-    res['molwt'] = X.exactmw
-    res['molComplexity'] = model.predict(X[attributes].astype(float))
-    res['SMART-PMI'] = (0.13 * res.molwt) + (177 * res.molComplexity) - 252
+    res['MW'] = X.exactmw
+    res['COMPLEXITY'] = model.predict(X[attributes].astype(float))
+    res['SMART-PMI'] = (0.13 * res.MW) + (177 * res.COMPLEXITY) - 252
     res['SMILES'] = smiles
-
+    res['FILENAME'] = x['FILENAME']
+    res['NAME'] = x['NAME']
+    res['ROMol'] = x['ROMol']
     return res.round(3)
 
 
