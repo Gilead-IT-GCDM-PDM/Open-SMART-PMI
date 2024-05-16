@@ -6,7 +6,6 @@ import pandas as pd
 from glob import glob
 from datetime import datetime
 import rdkit.Chem
-from rdkit.Chem import PandasTools
 
 # -- PACKAGE IMPORTS -- 
 import molecular_descriptors
@@ -33,14 +32,14 @@ def calculate_smart_pmi(r:pd.DataFrame) -> pd.DataFrame:
     return round(smart_pmi, 2)
 
 
-def predict(input:str, output_dir:str, model_path:str='') -> pd.DataFrame:
+def predict(filepath: str, output_dir: str, model_path: str='') -> pd.DataFrame:
     '''
     predict the complexity and SMART-PMI of a given molecule(s). 
 
     Arguments:
     ---
     `model_path`: path to the chosen model object
-    `input`: the molecule source with. `input` is compatible with:
+    `filepath`: the molecule source with. `filepath` is compatible with:
         (1) a directory of .SDF files 
         (2) a csv/excel file containing SMILES strings (denoted by 'SMILES' in the header row)
         (3) a pickled object containing pandas dataframe containing SMILES strings (denoted by 'SMILES' in the header row)
@@ -50,7 +49,7 @@ def predict(input:str, output_dir:str, model_path:str='') -> pd.DataFrame:
     assert os.path.exists(output_dir), f"Output dir: {output_dir} does not exists"
 
     try:
-        df = read_input(input=input)
+        df = read_file(filepath=filepath)
 
         assert 'SMILES' in df.columns, "Missing SMILES column in data"
 
@@ -84,44 +83,8 @@ def make_predictions(x, model_path=MODEL_GS_04) -> pd.DataFrame:
     return res.round(3)
 
 
-def read_sdf_files(names):
-    dfs = []
-    # convert SDF to SMILES
-    for file in names:
-        load_mol = PandasTools.LoadSDF(file, smilesName='SMILES').head(1)
-        dfs += [load_mol]
-
-    df = pd.concat(dfs)
-    df['ID'] = names
-    df.reset_index(drop=True, inplace=True)
-    return df
-
-def read_input(input:str) -> pd.DataFrame:
-        input_ext = input[-4:]
-
-        # read directory of SDF files 
-        if os.path.isdir(input):
-            assert os.path.exists(input), f"Input dir: {input} does not exists"
-            input_dir = input
-            filenames = list(glob(f"{input_dir}/*.sdf"))
-            df = read_sdf_files(filenames)
-
-        # read csv or excel file
-        elif ('.csv' in input_ext) | ('.txt' in input_ext):
-            df = pd.read_csv(input)
-        elif ('.xls' in input_ext):
-            df = pd.read_excel(input)
-
-        # read pickled dataframe
-        elif ('.obj' in input_ext) | ('.pkl' in input_ext):
-            with open(input, 'rb') as f:
-                df = pickle.load(f)
-
-        return df
-
-
 def generate_output(df, output_dir) -> None:
     now = datetime.now().strftime('%y-%m-%d-%H%M%S')
     output_path = os.path.join(output_dir, f'predictions_{now}.csv')
-    df.to_csv(output_path, index=False)  #, engine=openpyxl)
+    df.to_csv(output_path, index=False)
     print(f'... Writing predictions to {output_path}')

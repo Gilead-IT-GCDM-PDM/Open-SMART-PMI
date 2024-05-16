@@ -12,11 +12,12 @@ from sklearn.preprocessing import MinMaxScaler
 
 # -- PACKAGE IMPORTS --
 import molecular_descriptors
-from predict import read_input
+from utilities import read_file
+
 
 # -- TRAINING MODULE --
 
-def train(data_path:str, output_dir:str, grid_search=True) -> None:
+def train(data_path: str, output_dir: str, grid_search=True) -> None:
     '''
     Main training loop to preprocess the data and train a model
 
@@ -27,7 +28,7 @@ def train(data_path:str, output_dir:str, grid_search=True) -> None:
     `grid_search`: perform grid search for hyperparameter tuning
     '''
     # create output directory
-    data = read_input(data_path)
+    data = read_file(data_path)
     now = datetime.now().strftime('%Y-%m-%d_%H%M%S')
     path = os.path.join(output_dir, 'model_'+now)
     os.mkdir(path=path)
