@@ -36,9 +36,9 @@ def read_sdf_files(names):
     # convert SDF to SMILES
     for file in names:
         load_mol = PandasTools.LoadSDF(file, smilesName='SMILES')  # .head(1)
-        load_mol['ID'] = os.path.basename(file)
+        load_mol['FILENAME'] = os.path.basename(file)
         if 'NAME' not in load_mol.columns:
-            load_mol['NAME'] = load_mol['ID']
+            load_mol['NAME'] = load_mol['FILENAME']
         dfs += [load_mol]
 
     df = pd.concat(dfs, ignore_index=True)

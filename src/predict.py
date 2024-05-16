@@ -81,8 +81,17 @@ def make_predictions(x, model_path=MODEL_GS_04) -> pd.DataFrame:
     res['SMILES'] = smiles
     res['FILENAME'] = x['FILENAME']
     res['NAME'] = x['NAME']
-    res['ROMol'] = x['ROMol']
+    res['ROMol'] = x['ROMol'].apply(lambda x: extract_img_src(x))
     return res.round(3)
+
+
+def extract_img_src(x):
+    # img_tag will be of format <img data-content="..." src="..." alt="..."/>
+    img_tag = f'{x}'
+    start = img_tag.find("src=")
+    end = img_tag.find(" alt")
+    src = img_tag[start+4: end]
+    return src
 
 
 def generate_output(df, output_dir) -> None:
