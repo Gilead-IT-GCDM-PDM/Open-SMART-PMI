@@ -86,8 +86,9 @@ To launch the web application from the command line:
 
    ```shell
      cd src
-     python -m webapp.index
+     python -m webapp.index -p <port>
    ```
+The default application port is 8050
 
 Navigate to the link described in the terminal.
    For example: `Dash is running on` `http://0.0.0.0:8050/`
