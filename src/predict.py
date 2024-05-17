@@ -3,11 +3,10 @@ import os
 import pickle
 import traceback
 import pandas as pd
-from glob import glob
 from datetime import datetime
-import rdkit.Chem
 
 # -- PACKAGE IMPORTS -- 
+import utilities
 import molecular_descriptors
 
 
@@ -49,7 +48,7 @@ def predict(filepath: str, output_dir: str, model_path: str='') -> pd.DataFrame:
     assert os.path.exists(output_dir), f"Output dir: {output_dir} does not exists"
 
     try:
-        df = read_file(filepath=filepath)
+        df = utilities.read_file(filepath=filepath)
 
         assert 'SMILES' in df.columns, "Missing SMILES column in data"
 

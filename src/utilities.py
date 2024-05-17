@@ -17,6 +17,7 @@ def persist_sdf_data(content):
 def read_sdf_data(contents, names):
     filenames = []
     for content, name in zip(contents, names):
+        print(f'processing: {name}')
         content_type, content_string = content.split(',')
         decoded = base64.b64decode(content_string)
         os.makedirs('tmp', exist_ok=True)

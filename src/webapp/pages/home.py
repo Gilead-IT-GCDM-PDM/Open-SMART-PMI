@@ -51,6 +51,7 @@ def compute_pmi(contents, names):
         # complexity = estimates.iloc[0]['molComplexity']
         # pmi = estimates.iloc[0]['SMART-PMI']
         # mw = estimates.iloc[0]['molwt']
+        # estimates['ROMol'] = estimates['ROMol'].apply(lambda x: html.Img(src=x))
 
         cols = ['NAME', 'SMART-PMI', 'COMPLEXITY', 'MW', 'SMILES', 'FILENAME']
         display = estimates[cols]
@@ -93,8 +94,9 @@ index_page = html.Div(children=[
     upload_file_sdf,
     html.Label(id='filename-sdf'),
 
+    html.Br(),
     dcc.Loading([
         html.Div(id='attributes'),
-        html.Div(children=[html.Br()] * 1)
+        html.Div(children=[html.Br()] * 7)
     ])
 ])

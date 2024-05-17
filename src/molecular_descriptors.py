@@ -42,9 +42,10 @@ def compute(smi_series: pd.Series) -> pd.DataFrame:
     # -- combine feature descriptors into df
     df = pd.concat(dfs, axis=1)
 
-    print(f'... Removed the following SMILES {list(idx_to_exclude)}...')
-    df = exclude_rows_from_df(df, idx_to_exclude)
-    smi_series = exclude_rows_from_df(smi_series, idx_to_exclude)
+    if len(idx_to_exclude):
+        print(f'... Removed the following SMILES {list(idx_to_exclude)}...')
+        df = exclude_rows_from_df(df, idx_to_exclude)
+        smi_series = exclude_rows_from_df(smi_series, idx_to_exclude)
 
     atom_pair_tuples = [atom_pairs(s) for s in smi_series]
     df['UNIQUETT'], df['UNIQUEAP'], df['CHIRAL_COUNT'] = zip(*atom_pair_tuples)
