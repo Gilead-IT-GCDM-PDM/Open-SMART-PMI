@@ -21,19 +21,18 @@ MODEL_GS_04 = os.path.join(
 
 # -- PREDICTION MODULE
 
-def calculate_smart_pmi(r:pd.DataFrame) -> pd.DataFrame:
-    '''
-    Calculation of SMART-PMI score using complexity
-    '''
+
+def calculate_smart_pmi(r: pd.DataFrame) -> pd.DataFrame:
+    """ Calculation of SMART-PMI score using complexity
+    """
     mol_wt = r['MW']
     complexity = r['Complexity']
     smart_pmi = (0.13 * mol_wt) + (177 * complexity) - 252
     return round(smart_pmi, 2)
 
 
-def predict(filepath: str, output_dir: str, model_path: str='') -> pd.DataFrame:
-    '''
-    predict the complexity and SMART-PMI of a given molecule(s). 
+def predict(filepath: str, output_dir: str, model_path: str = '') -> pd.DataFrame:
+    """ predict the complexity and SMART-PMI of a given molecule(s).
 
     Arguments:
     ---
@@ -43,8 +42,7 @@ def predict(filepath: str, output_dir: str, model_path: str='') -> pd.DataFrame:
         (2) a csv/excel file containing SMILES strings (denoted by 'SMILES' in the header row)
         (3) a pickled object containing pandas dataframe containing SMILES strings (denoted by 'SMILES' in the header row)
     `output`: directory to store prediction information
-
-    '''
+    """
     assert os.path.exists(output_dir), f"Output dir: {output_dir} does not exists"
 
     try:
@@ -63,9 +61,8 @@ def predict(filepath: str, output_dir: str, model_path: str='') -> pd.DataFrame:
 
 
 def make_predictions(x, model_path=MODEL_GS_04) -> pd.DataFrame:
-    '''
-    Use given model to make molecular complexity and SMART-PMI predictions
-    '''
+    """ Use given model to make molecular complexity and SMART-PMI predictions
+    """
     with open(model_path, 'rb') as f:
         model, attributes = pickle.load(f)
 
@@ -73,7 +70,7 @@ def make_predictions(x, model_path=MODEL_GS_04) -> pd.DataFrame:
     smiles = x.SMILES
     X = molecular_descriptors.compute(smiles)
 
-    res = pd.DataFrame()
+    res = pd.DataFrame(X[attributes])
     res['MW'] = X.exactmw
     res['COMPLEXITY'] = model.predict(X[attributes].astype(float))
     res['SMART-PMI'] = (0.13 * res.MW) + (177 * res.COMPLEXITY) - 252
@@ -84,12 +81,14 @@ def make_predictions(x, model_path=MODEL_GS_04) -> pd.DataFrame:
     return res.round(3)
 
 
-def extract_img_src(x):
+def extract_img_src(img_tag: str) -> str:
+    """ Extract image src from RDKit generated img tag
+    """
     # img_tag will be of format <img data-content="..." src="..." alt="..."/>
-    img_tag = f'{x}'
-    start = img_tag.find("src=")
-    end = img_tag.find(" alt")
-    src = img_tag[start+4: end]
+    tag = f'{img_tag}'
+    start = tag.find("src=")
+    end = tag.find(" alt")
+    src = tag[start+4: end]
     return src
 
 

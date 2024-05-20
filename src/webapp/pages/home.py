@@ -48,12 +48,14 @@ def compute_pmi(contents, names):
         df = utilities.read_sdf_data(contents, names)
         estimates = predict.make_predictions(df)
 
-        cols = ['NAME', 'SMART-PMI', 'COMPLEXITY', 'MW', 'SMILES', 'FILENAME']
+        cols = ['NAME', 'SMART-PMI', 'COMPLEXITY', 'MW', 'SMILES', 'FILENAME',
+                'UNIQUETT', 'NumHeteroatoms', 'chi4n', 'CHIRAL_ALLATOM_RATIO']
         display = estimates[cols]
 
         output = dash.dash_table.DataTable(
             display.to_dict('records'),
-            [{"name": i, "id": i} for i in display.columns]
+            [{"name": i, "id": i} for i in display.columns],
+            export_format='xlsx'
         )
         return output
     raise PreventUpdate

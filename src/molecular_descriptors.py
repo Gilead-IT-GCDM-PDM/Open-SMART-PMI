@@ -21,8 +21,7 @@ calc = Calculator(descriptors, ignore_3D=True)
 
 
 def compute(smi_series: pd.Series) -> pd.DataFrame:
-    """ 
-    Compute molecular descriptors over a series of smiles strings.
+    """ Compute molecular descriptors over a series of smiles strings.
     """
     dfs = []
 
@@ -59,9 +58,8 @@ def exclude_rows_from_df(df, idx_to_exclude):
 
 
 def smi_to_descriptors(smile:str) -> np.array:
-    '''
-    Compute standard kit of rdkit descriptors
-    '''
+    """ Compute standard kit of rdkit descriptors
+    """
     # -- use RDKit featurizers
     mol = Chem.MolFromSmiles(smile, sanitize=True)
     if mol:
@@ -70,9 +68,8 @@ def smi_to_descriptors(smile:str) -> np.array:
 
 
 def atom_pairs(smile:str) -> tuple:
-    '''
-    Calculate unique topological torsion and unique atom pairs on eligible features
-    '''
+    """ Calculate unique topological torsion and unique atom pairs on eligible features
+    """
     m = Chem.MolFromSmiles(smile)
 
     tt = Torsions.GetTopologicalTorsionFingerprint(m)
