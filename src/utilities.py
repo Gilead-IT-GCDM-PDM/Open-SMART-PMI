@@ -3,10 +3,11 @@ import time
 import base64
 import pandas as pd
 from glob import glob
+from typing import List
 from rdkit.Chem import PandasTools
 
 
-def persist_sdf_data(content):
+def persist_sdf_data(content: List[str]):
     content_type, content_string = content.split(',')
     decoded = base64.b64decode(content_string)
     with open('tmp/uploaded.sdf', 'wb') as f:
@@ -14,7 +15,7 @@ def persist_sdf_data(content):
     return decoded
 
 
-def read_sdf_data(contents, names):
+def read_sdf_data(contents: List[str], names: List[str]):
     filenames = []
     for content, name in zip(contents, names):
         print(f'processing: {name}')
@@ -32,7 +33,7 @@ def read_sdf_data(contents, names):
     return df
 
 
-def read_sdf_files(names):
+def read_sdf_files(names: List[str]) -> pd.DataFrame:
     dfs = []
     # convert SDF to SMILES
     for file in names:

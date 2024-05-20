@@ -18,15 +18,14 @@ from utilities import read_file
 # -- TRAINING MODULE --
 
 def train(data_path: str, output_dir: str, grid_search=True) -> None:
-    '''
-    Main training loop to preprocess the data and train a model
+    """ Main training loop to preprocess the data and train a model
 
     Arguments
     ---
     `data_path`: path to compound file SDFs or SMILES
     `output_dir`: path to store model and experiment results
     `grid_search`: perform grid search for hyperparameter tuning
-    '''
+    """
     # create output directory
     data = read_file(data_path)
     now = datetime.now().strftime('%Y-%m-%d_%H%M%S')
@@ -66,9 +65,8 @@ def train(data_path: str, output_dir: str, grid_search=True) -> None:
 
 # -- DATA FILTERING -- 
 
-def filter_columns(df) -> set[str]:
-    """ 
-    Return set of columns that contain largely null or error objects
+def filter_columns(df: pd.DataFrame) -> set[str]:
+    """ Return set of columns that contain largely null or error objects
     """
     nonnumerics = df.copy().drop(columns=['SMILES']).select_dtypes(exclude='number').applymap(type).apply(set).to_frame()
     ind = pd.get_dummies(nonnumerics.explode(0))
@@ -82,10 +80,9 @@ def filter_columns(df) -> set[str]:
     return nulls
 
 
-def filter_test_rm_low_var(df) -> set[str]:
-    '''
-    Use training set data to remove variables of low variance
-    '''
+def filter_test_rm_low_var(df: pd.DataFrame) -> set[str]:
+    """ Use training set data to remove variables of low variance
+    """
     dff = df.astype(float)
     m = len(dff.columns)
     null_rate = 0.125
@@ -102,15 +99,15 @@ def filter_test_rm_low_var(df) -> set[str]:
     cols_to_drop = low_var_columns.union(gt125pct_null)
     return cols_to_drop
 
+
 # -- EXPERIMENT TRACKING -- 
 
 def write_data(path, now,
                model_aattrs,
                X_train, y_train, X_test, y_test,
                removed):
-    '''
-    Save variables to experiment folder
-    '''
+    """ Save variables to experiment folder
+    """
     pickle.dump(model_aattrs, open(f'{path}/{now}_model_aattrs.pkl', 'wb'))
     pickle.dump(X_train, open(f'{path}/x_train.pkl', 'wb'))
     pickle.dump(y_train, open(f'{path}/y_train.pkl', 'wb'))
@@ -120,13 +117,11 @@ def write_data(path, now,
     print(f'... Saved to <{path}>')
 
 
-
 # -- GENERAL MODELING HELPER FUNCTIONS --
     
 def make_predictions(model, X, y):
-    '''
-    Compute and print model metrics to terminal
-    '''
+    """ Compute and print model metrics to terminal
+    """
     print('... Model Metrics ...')
     pred = model.predict(X)
     mae = mean_absolute_error(y, pred)
@@ -146,9 +141,8 @@ def make_predictions(model, X, y):
 
 
 def compute_model_scores(x_train, y_train, models: dict):
-    '''
-    Generalized helper function to quickly evaluate models
-    '''
+    """ Generalized helper function to quickly evaluate models
+    """
     scores = {}
     model_info = {}
 
@@ -177,9 +171,8 @@ def compute_model_scores(x_train, y_train, models: dict):
 
 
 def rf_regress(train_x, train_y, val_split=0.8, grid_search=False):
-    '''
-    Helper function to quickly tune and evaluate random forest models
-    '''
+    """ Helper function to quickly tune and evaluate random forest models
+    """
 
     # -- Pick model
     model = base_model()
@@ -198,14 +191,13 @@ def rf_regress(train_x, train_y, val_split=0.8, grid_search=False):
         random_grid['n_estimators'] = n_estimators
 
         # # Number of trees in random forest
-        # n_estimators = [int(x) for x in np.linspace(start = 50, stop = 1000, num = 10)]
-        # random_grid['n_estimators'] = n_estimators
-        # Number of features to consider at every split
         max_features = [None, 'sqrt', 'log2']
         random_grid['max_features'] = max_features
+
         # Minimum number of samples required to split a node
         min_samples_split = [5, 10, 20, 30]
         random_grid['min_samples_split'] = min_samples_split
+
         # Method of selecting samples for training each tree
         bootstrap = [True, False]
         random_grid['bootstrap'] = bootstrap
@@ -228,8 +220,7 @@ def rf_regress(train_x, train_y, val_split=0.8, grid_search=False):
 
 
 def base_model():
-    """ 
-    With the optimal hyperparameters for the full training data
+    """ With the optimal hyperparameters for the full training data
     """
     return RandomForestRegressor(
         max_depth=6,
