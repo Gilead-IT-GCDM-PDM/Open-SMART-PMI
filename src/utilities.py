@@ -60,5 +60,7 @@ def read_file(filepath: str) -> pd.DataFrame:
         df = pd.read_csv(filepath)
     elif '.xlsx' in ext:
         df = pd.read_excel(filepath)
+    else:
+        df = read_sdf_files([filepath])
 
     return df
