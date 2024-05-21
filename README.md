@@ -82,13 +82,18 @@ command line [Section 4] or via Docker. The latter is recommended for those with
 
  ![image](src/webapp/assets/web-app.jpg)
 
-To launch the web application from the command line:
+To launch the web application from the command line. 
+
+   ```shell
+     cd src
+     python -m webapp.index
+   ```
+The default application port is 8050. To run application on a different parameter use optional parameter -p, for example:
 
    ```shell
      cd src
      python -m webapp.index -p <port>
    ```
-The default application port is 8050
 
 Navigate to the link described in the terminal.
    For example: `Dash is running on` `http://0.0.0.0:8050/`
