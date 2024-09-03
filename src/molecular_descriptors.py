@@ -9,7 +9,7 @@ from mordred import Calculator, descriptors
 
 # -- VARIABLES
 
-# RDKit featurizers
+# -- RDKit featurizers
 descriptor_names = list(Chem.rdMolDescriptors.Properties.GetAvailableProperties())
 get_descriptors = Chem.rdMolDescriptors.Properties(descriptor_names)
 
@@ -20,43 +20,44 @@ calc = Calculator(descriptors, ignore_3D=True)
 # -- HELPER FUNCTIONS
 
 
-def compute(smi_series):
-    """ Apply molecular descriptors to a series of smiles strings.
-    return dataframe
+def compute(smi_series: pd.Series) -> pd.DataFrame:
+    """ Compute molecular descriptors over a series of smiles strings.
     """
-    df = []
+    dfs = []
 
     # -- use RDKit featurizers
     rdkit_desc = list(smi_series.apply(smi_to_descriptors))
     desc_df = pd.DataFrame(rdkit_desc, columns=descriptor_names)
-    df += [desc_df]
+    dfs += [desc_df]
 
-    # remove features with nulls
+    # -- remove features with nulls
     idx_to_exclude = desc_df[desc_df.isna().any(axis=1)].index
 
     # -- use Mordred featurizers
     mols = [Chem.MolFromSmiles(smi)
             for smi in smi_series if Chem.MolFromSmiles(smi) is not None]
     mord_df = calc.pandas(mols)
-    df += [mord_df]
+    dfs += [mord_df]
+    # -- combine feature descriptors into df
+    df = pd.concat(dfs, axis=1)
 
-    # combine feature descriptors into df
-    df = pd.concat(df, axis=1)
-    trim = lambda df: df[~df.index.isin(idx_to_exclude)]
-    print(f'... Removed the following SMILES {list(idx_to_exclude)}...')
-    df = trim(df)
+    if len(idx_to_exclude):
+        print(f'... Removed the following SMILES {list(idx_to_exclude)}...')
+        df = exclude_rows_from_df(df, idx_to_exclude)
+        smi_series = exclude_rows_from_df(smi_series, idx_to_exclude)
 
-    # we can pass mol instead of smile: TODO
-    # -- add in uniqueTT and uniqueAP
-    atom_pair_tuples = [atom_pairs(s) for s in trim(smi_series)]
+    atom_pair_tuples = [atom_pairs(s) for s in smi_series]
     df['UNIQUETT'], df['UNIQUEAP'], df['CHIRAL_COUNT'] = zip(*atom_pair_tuples)
     df['CHIRAL_ALLATOM_RATIO'] = df.CHIRAL_COUNT / df.NumHeavyAtoms
-
-    df['SMILES'] = trim(smi_series)
+    df['SMILES'] = smi_series
     return df
 
 
-def smi_to_descriptors(smile):
+def exclude_rows_from_df(df, idx_to_exclude):
+    return df[~df.index.isin(idx_to_exclude)]
+
+
+def smi_to_descriptors(smile:str) -> np.array:
     """ Compute standard kit of rdkit descriptors
     """
     # -- use RDKit featurizers
@@ -66,8 +67,8 @@ def smi_to_descriptors(smile):
     return []
 
 
-def atom_pairs(smile):
-    """ Calculate uniqueTT and uniqueAP on eligible features
+def atom_pairs(smile:str) -> tuple:
+    """ Calculate unique topological torsion and unique atom pairs on eligible features
     """
     m = Chem.MolFromSmiles(smile)
 

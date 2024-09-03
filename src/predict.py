@@ -3,12 +3,10 @@ import os
 import pickle
 import traceback
 import pandas as pd
-from glob import glob
 from datetime import datetime
-import rdkit.Chem
-from rdkit.Chem import PandasTools
 
 # -- PACKAGE IMPORTS -- 
+import utilities
 import molecular_descriptors
 
 
@@ -23,32 +21,32 @@ MODEL_GS_04 = os.path.join(
 
 # -- PREDICTION MODULE
 
-def calculate_smart_pmi(r):
-    '''
-    Calculation of SMART-PMI score using complexity
-    '''
+
+def calculate_smart_pmi(r: pd.DataFrame) -> pd.DataFrame:
+    """ Calculation of SMART-PMI score using complexity
+    """
     mol_wt = r['MW']
     complexity = r['Complexity']
     smart_pmi = (0.13 * mol_wt) + (177 * complexity) - 252
     return round(smart_pmi, 2)
 
 
-def predict(input, output_dir, model_path=''):
-    '''
-    predict the complexity and SMART-PMI of a given molecule(s). 
+def predict(filepath: str, output_dir: str, model_path: str = '') -> pd.DataFrame:
+    """ predict the complexity and SMART-PMI of a given molecule(s).
 
+    Arguments:
+    ---
     `model_path`: path to the chosen model object
-    `input`: the molecule source with. `input` is compatible with:
+    `filepath`: the molecule source with. `filepath` is compatible with:
         (1) a directory of .SDF files 
         (2) a csv/excel file containing SMILES strings (denoted by 'SMILES' in the header row)
         (3) a pickled object containing pandas dataframe containing SMILES strings (denoted by 'SMILES' in the header row)
     `output`: directory to store prediction information
-
-    '''
+    """
     assert os.path.exists(output_dir), f"Output dir: {output_dir} does not exists"
 
     try:
-        df = read_input(input=input)
+        df = utilities.read_file(filepath=filepath)
 
         assert 'SMILES' in df.columns, "Missing SMILES column in data"
 
@@ -62,10 +60,9 @@ def predict(input, output_dir, model_path=''):
         traceback.print_exc()
 
 
-def make_predictions(x, model_path=MODEL_GS_04):
-    '''
-    Use given model to make molecular complexity and SMART-PMI predictions
-    '''
+def make_predictions(x, model_path=MODEL_GS_04) -> pd.DataFrame:
+    """ Use given model to make molecular complexity and SMART-PMI predictions
+    """
     with open(model_path, 'rb') as f:
         model, attributes = pickle.load(f)
 
@@ -73,54 +70,30 @@ def make_predictions(x, model_path=MODEL_GS_04):
     smiles = x.SMILES
     X = molecular_descriptors.compute(smiles)
 
-    res = pd.DataFrame()
-    res['molwt'] = X.exactmw
-    res['molComplexity'] = model.predict(X[attributes].astype(float))
-    res['SMART-PMI'] = (0.13 * res.molwt) + (177 * res.molComplexity) - 252
+    res = pd.DataFrame(X[attributes])
+    res['MW'] = X.exactmw
+    res['COMPLEXITY'] = model.predict(X[attributes].astype(float))
+    res['SMART-PMI'] = (0.13 * res.MW) + (177 * res.COMPLEXITY) - 252
     res['SMILES'] = smiles
-
+    res['FILENAME'] = x['FILENAME']
+    res['NAME'] = x['NAME']
+    res['ROMol'] = x['ROMol'].apply(lambda x: extract_img_src(x))
     return res.round(3)
 
 
-def read_sdf_files(names):
-    dfs = []
-    # convert SDF to SMILES
-    for file in names:
-        load_mol = rdkit.Chem.PandasTools.LoadSDF(file, smilesName='SMILES').head(1)
-        dfs += [load_mol]
-
-    df = pd.concat(dfs)
-    df['ID'] = names
-    df.reset_index(drop=True, inplace=True)
-    
-    return df
-
-def read_input(input):
-        input_ext = input[-4:]
-
-        # path for predicting from directory of SDF files 
-        if os.path.isdir(input):
-            assert os.path.exists(input), f"Input dir: {input} does not exists"
-            input_dir = input
-            filenames = list(glob(f"{input_dir}/*.sdf"))
-            df = read_sdf_files(filenames)
-
-        # path for predicting from csv or excel file
-        elif ('.csv' in input_ext) | ('.txt' in input_ext):
-            df = pd.read_csv(input)
-        elif ('.xls' in input_ext):
-            df = pd.read_excel(input)
-
-        # path for predicting from pickled dataframe
-        elif ('.obj' in input_ext) | ('.pkl' in input_ext):
-            with open(input, 'rb') as f:
-                df = pickle.load(f)
-
-        return df
+def extract_img_src(img_tag: str) -> str:
+    """ Extract image src from RDKit generated img tag
+    """
+    # img_tag will be of format <img data-content="..." src="..." alt="..."/>
+    tag = f'{img_tag}'
+    start = tag.find("src=")
+    end = tag.find(" alt")
+    src = tag[start+4: end]
+    return src
 
 
-def generate_output(df, output_dir):
+def generate_output(df, output_dir) -> None:
     now = datetime.now().strftime('%y-%m-%d-%H%M%S')
     output_path = os.path.join(output_dir, f'predictions_{now}.csv')
-    df.to_csv(output_path, index=False)  #, engine=openpyxl)
+    df.to_csv(output_path, index=False)
     print(f'... Writing predictions to {output_path}')
