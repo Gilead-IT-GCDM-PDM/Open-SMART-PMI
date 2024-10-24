@@ -3,7 +3,7 @@ pandas==1.4.3
 matplotlib==3.5.2
 rdkit==2022.3.5
 mordred==1.2.0
-scikit-learn==1.1.2
+scikit-learn==1.5.0
 # dtreeviz==>=2.1
 plotly==5.9.0
 rdkit-pypi==2022.3.4
